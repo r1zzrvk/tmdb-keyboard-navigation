@@ -1,11 +1,5 @@
 {
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.formatOnPaste": true,
-  "editor.formatOnType": false,
-  "editor.formatOnSave": true,
-  "editor.formatOnSaveMode": "file",
-  "files.autoSave": "onFocusChange",
-  "eslint.experimental.useFlatConfig": true,
+  "eslint.run": "onType",
   "eslint.validate": [
     "javascript",
     "javascriptreact",
@@ -13,8 +7,26 @@
     "typescriptreact"
   ],
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "always"
+    "source.fixAll.eslint": "explicit"
   },
+  "[scss]": {
+    "editor.defaultFormatter": "vscode.css-language-features"
+  },
+  "[sass]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "typescript.preferences.autoImportFileExcludePatterns": [
+    "**/node_modules/react-i18next/**"
+  ],
+  "javascript.preferences.autoImportFileExcludePatterns": [
+    "**/node_modules/react-i18next/**"
+  ],
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnPaste": true,
+  "editor.formatOnType": false,
+  "editor.formatOnSave": true,
+  "editor.formatOnSaveMode": "file",
+  "files.autoSave": "onFocusChange",
   "files.insertFinalNewline": true,
   "files.trimFinalNewlines": true,
   "files.trimTrailingWhitespace": true,
@@ -26,6 +38,9 @@
     "node_modules/@mantine/core/styles.css"
   ],
   "[javascript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "[typescript]": {
     "editor.defaultFormatter": "vscode.typescript-language-features"
   }
 }

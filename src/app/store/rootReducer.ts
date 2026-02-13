@@ -1,7 +1,9 @@
+import { movieQueriesReducer, moviesReducer } from '@/entities/movie'
 import { combineReducers } from '@reduxjs/toolkit'
 
 export const rootReducer = combineReducers({
-  // TODO: Add reducers
+  movies: moviesReducer,
+  movieQueries: movieQueriesReducer,
 })
 
 export type RootState = ReturnType<typeof rootReducer>

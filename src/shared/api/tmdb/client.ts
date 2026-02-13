@@ -1,3 +1,4 @@
+import type { RequestParams } from "@/shared/types"
 import { ApiError } from "./error"
 
 const BASE_URL = import.meta.env.VITE_TMDB_BASE_URL as string
@@ -5,7 +6,7 @@ const TOKEN = import.meta.env.VITE_TMDB_TOKEN as string
 
 interface TmdbGetParams {
   path: string
-  params?: Record<string, string | number>
+  params?: RequestParams
   timeoutMs?: number
 }
 
