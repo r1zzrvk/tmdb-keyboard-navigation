@@ -1,34 +1,22 @@
-import { MovieCard, moviesApiActions } from "@/entities/movie"
-import { useEffect } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import { getKey } from "../../model"
-import { selectActiveFilter } from "@/entities/filter"
-import { selectSearchQuery } from "@/entities/search"
-import { selectQueryMovies } from "@/entities/movie/model"
-import { SimpleGrid } from "@mantine/core"
+import { MovieCard, paginationActions } from "@/entities/movie"
+import { Center, Loader, SimpleGrid } from "@mantine/core"
+import { useMoviesQuery } from "../../hooks"
+import { Paginator } from "@/shared/ui"
+import { useDispatch } from "react-redux"
 
 export const MovieList = () => {
   const dispatch = useDispatch()
-  const active = useSelector(selectActiveFilter)
-  const searchQuery = useSelector(selectSearchQuery)
+  const { data: movies, error, loading, page, totalPages } = useMoviesQuery()
 
-  // TODO: Add pagination state
-  const page = 1
+  if (loading && movies.length === 0) {
+    // TODO: add page loader component
+    return <Center h="70vh"><Loader size="lg" /></Center>
+  }
 
-  const key = getKey(active, page, searchQuery)
-  const movies = useSelector(selectQueryMovies(key ?? ''))
-
-  useEffect(() => {
-    if (active === 'favorites') return // favorites не грузим через API
-
-    if (searchQuery.trim().length >= 2) {
-      dispatch(moviesApiActions.loadSearch(searchQuery.trim(), page))
-    } else if (active === 'popular') {
-      dispatch(moviesApiActions.loadPopular(page))
-    } else if (active === 'now_playing') {
-      dispatch(moviesApiActions.loadNowPlaying(page))
-    }
-  }, [dispatch, active, searchQuery, page])
+  if (error) {
+    // TODO: add error handling
+    return null
+  }
 
   return (
     <div>
@@ -37,6 +25,14 @@ export const MovieList = () => {
           <MovieCard key={movie.id} {...movie} />
         ))}
       </SimpleGrid>
+      {totalPages && page && (
+        <Paginator
+          page={page}
+          totalPages={totalPages}
+          onPrev={() => dispatch(paginationActions.prevPage())}
+          onNext={() => dispatch(paginationActions.nextPage())}
+        />
+      )}
     </div>
   )
 }

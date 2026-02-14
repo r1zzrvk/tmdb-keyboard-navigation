@@ -1,10 +1,11 @@
 import type { RootState } from '@/app/store'
+import type { QueryState } from '../types'
 
-export const selectQuery = (key: string) => (state: RootState) => state.movieQueries.byKey[key]
+export const selectMovieQuery = (key: string) => (state: RootState): QueryState | undefined => state.movieQueries.byKey[key]
 
 export const selectMovieById = (id: number) => (state: RootState) => state.movies.byId[id]
 
-export const selectQueryMovies = (key: string) => (state: RootState) => {
+export const selectMovies = (key: string) => (state: RootState) => {
   const query = state.movieQueries.byKey[key]
 
   if (!query) {
@@ -13,3 +14,5 @@ export const selectQueryMovies = (key: string) => (state: RootState) => {
 
   return query.ids.map(id => state.movies.byId[id]).filter(Boolean)
 }
+
+export const selectMoviePage = (state: RootState) => state.moviePagination.page

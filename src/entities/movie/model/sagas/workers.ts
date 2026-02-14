@@ -1,7 +1,7 @@
 import type { ListRequestKind, TmdbMovie, TmdbPagedResponse } from "@/shared/types"
 import { call, put, select, type Effect } from "redux-saga/effects"
 import { makeKey, mapMovie } from "../utils"
-import { selectQuery } from "../store"
+import { selectMovieQuery } from "../store"
 import { movieQueriesActions } from "../store/queriesSlice"
 import { fetchMovieDetails, fetchNowPlaying, fetchPopular, searchMovies } from "@/shared/api"
 import type { Movie, QueryState } from "../types"
@@ -17,16 +17,11 @@ function* loadList(kind: ListRequestKind, page: number): Generator<Effect, void,
   const key = makeKey(kind, { page })
 
   // Check if the data is already in the cache
-  const existing = (yield select(selectQuery(key))) as QueryState | undefined
+  const existing = (yield select(selectMovieQuery(key))) as QueryState | undefined
 
   if (existing?.status === 'success' && existing.fetchedAt && Date.now() - existing.fetchedAt < MOVIE_CACHE_TTL) {
     return
   }
-
-  if (existing?.status === 'loading') {
-    return
-  }
-
   yield put(movieQueriesActions.queryStarted({ key }))
 
   try {
@@ -76,13 +71,9 @@ function* loadSearch(query: string, page: number): Generator<Effect, void, unkno
   const key = makeKey('search', { query, page })
 
   // Check if the data is already in the cache
-  const existing = (yield select(selectQuery(key))) as QueryState | undefined
+  const existing = (yield select(selectMovieQuery(key))) as QueryState | undefined
 
   if (existing?.status === 'success' && existing.fetchedAt && Date.now() - existing.fetchedAt < MOVIE_CACHE_TTL) {
-    return
-  }
-
-  if (existing?.status === 'loading') {
     return
   }
 
@@ -126,13 +117,9 @@ function* loadDetails(id: number): Generator<Effect, void, unknown> {
   const key = makeKey('details', { id })
 
   // Check if the data is already in the cache
-  const existing = (yield select(selectQuery(key))) as QueryState | undefined
+  const existing = (yield select(selectMovieQuery(key))) as QueryState | undefined
 
   if (existing?.status === 'success') {
-    return
-  }
-
-  if (existing?.status === 'loading') {
     return
   }
 
