@@ -1,12 +1,12 @@
 import { createBrowserRouter, RouterProvider as BaseRouterProvider, Navigate } from 'react-router-dom'
 import type { FC } from 'react'
 import { RoutePaths } from '@/shared/constants'
+import { HomePage } from '@/pages/home'
 
 const router = createBrowserRouter([
   {
     path: RoutePaths.Home,
-    // TODO: Add page
-    element: <div>Home</div>,
+    element: <HomePage />,
     loader: () => {
       // TODO: Add loader
       return {

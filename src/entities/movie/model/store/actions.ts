@@ -20,7 +20,7 @@ export type LoadDetailsAction = {
 
 export type MovieAction = LoadPopularAction | LoadNowPlayingAction | LoadSearchAction | LoadDetailsAction
 
-export const actions = {
+export const moviesApiActions = {
   loadPopular: (page: number): LoadPopularAction => ({
     type: 'movies/loadPopular',
     payload: { page },

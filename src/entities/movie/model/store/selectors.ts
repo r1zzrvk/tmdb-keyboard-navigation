@@ -5,7 +5,11 @@ export const selectQuery = (key: string) => (state: RootState) => state.movieQue
 export const selectMovieById = (id: number) => (state: RootState) => state.movies.byId[id]
 
 export const selectQueryMovies = (key: string) => (state: RootState) => {
-  const q = state.movieQueries.byKey[key]
-  if (!q) return []
-  return q.ids.map(id => state.movies.byId[id]).filter(Boolean)
+  const query = state.movieQueries.byKey[key]
+
+  if (!query) {
+    return []
+  }
+
+  return query.ids.map(id => state.movies.byId[id]).filter(Boolean)
 }

@@ -1,2 +1,2 @@
-export { watchMovie, moviesReducer, movieQueriesReducer } from './model'
+export { watchMovie, moviesReducer, movieQueriesReducer, moviesApiActions } from './model'
 export type { Movie } from './model'
