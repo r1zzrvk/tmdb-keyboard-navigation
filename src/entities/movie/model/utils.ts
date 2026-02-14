@@ -1,11 +1,13 @@
 import type { RequestKind, RequestParams, TmdbMovie } from '@/shared/types'
 import type { Movie } from './types'
 
-export const mapMovie = ({ id, title, overview, poster_path, release_date, vote_average }: TmdbMovie): Movie => ({
+// TODO: extend interface to include more movie properties
+export const mapMovie = ({ id, title, overview, poster_path, release_date, vote_average, backdrop_path }: TmdbMovie): Movie => ({
   id: id,
   title: title,
   overview: overview ?? null,
   posterPath: poster_path ?? null,
+  backdropPath: backdrop_path ?? null,
   releaseDate: release_date ?? null,
   voteAverage: vote_average ?? null,
 })

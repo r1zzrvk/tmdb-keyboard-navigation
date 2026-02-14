@@ -5,18 +5,19 @@ export type MovieId = number
  */
 
 // TODO: extend interface to include more movie properties
-export type Movie = {
+export interface Movie {
   id: MovieId
   title: string
   overview: string | null
   posterPath: string | null
+  backdropPath: string | null
   releaseDate: string | null
   voteAverage: number | null
 }
 
 export type QueryKey = string
 
-export type QueryState = {
+export interface QueryState {
   status: 'idle' | 'loading' | 'success' | 'error'
   ids: MovieId[]
   page?: number
@@ -24,3 +25,7 @@ export type QueryState = {
   error?: string
   fetchedAt?: number
 }
+
+// TODO: Remove this when adding more props to the MovieCardProps
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface MovieCardProps extends Movie { }
