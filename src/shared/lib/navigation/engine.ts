@@ -1,4 +1,4 @@
-import type { NavigationEngineConfig, NavigationState, ZoneId, NavigationItem, NavigationItemId, NavigationArrowKey } from './model/types'
+import type { NavigationEngineConfig, NavigationState, ZoneId, NavigationItem, NavigationItemId, NavigationArrowKey, PageId } from './model/types'
 
 /**
  * Create navigation engine
@@ -12,8 +12,9 @@ export function createNavEngine(config: NavigationEngineConfig) {
   const lastActiveByZone = new Map<ZoneId, NavigationItemId>()
 
   const state: NavigationState = {
-    activeZoneId: 'grid',
+    activeZoneId: undefined,
     activeItemId: undefined,
+    currentPage: undefined,
   }
 
   /**
@@ -66,6 +67,17 @@ export function createNavEngine(config: NavigationEngineConfig) {
       .sort((a, b) => a.order - b.order)
 
     itemsByZone.set(item.zoneId, next)
+
+    // If we have a current page but no active zone/item, try to focus on the first zone
+    if (state.currentPage && !state.activeZoneId) {
+      const pageZones = getCurrentPageZones()
+      if (pageZones.length > 0 && pageZones[0] === item.zoneId) {
+        const enabledList = getEnabledItems(next)
+        if (enabledList.length > 0) {
+          focus(item.zoneId)
+        }
+      }
+    }
   }
 
   /**
@@ -128,6 +140,9 @@ export function createNavEngine(config: NavigationEngineConfig) {
    * @returns Active item or undefined if there is no active item
    */
   function getActiveItem() {
+    if (!state.activeZoneId) {
+      return undefined
+    }
     const list = itemsByZone.get(state.activeZoneId) ?? []
     const item = list.find((item) => item.id === state.activeItemId)
 
@@ -146,6 +161,9 @@ export function createNavEngine(config: NavigationEngineConfig) {
    * @returns true if movement was successful, false if we should switch zones
    */
   function moveDelta(delta: number): boolean {
+    if (!state.activeZoneId) {
+      return false
+    }
     const list = itemsByZone.get(state.activeZoneId) ?? []
     const enabledList = getEnabledItems(list)
 
@@ -182,10 +200,26 @@ export function createNavEngine(config: NavigationEngineConfig) {
   }
 
   /**
-   * Get next zone in vertical order
+   * Get zones for current page
+   * @returns Array of zone IDs for current page, or all zones if page is not set
+   */
+  function getCurrentPageZones(): ZoneId[] {
+    if (!state.currentPage || !config.pageZones) {
+      // Fallback to all zones if page is not set
+      return ['search', 'filters', 'grid', 'pagination', 'favourites', 'back-button']
+    }
+
+    return config.pageZones[state.currentPage] ?? []
+  }
+
+  /**
+   * Get next zone in vertical order for current page
    */
   function getNextZone(direction: 'up' | 'down'): ZoneId | null {
-    const zoneOrder: ZoneId[] = ['search', 'filters', 'grid', 'pagination']
+    if (!state.activeZoneId) {
+      return null
+    }
+    const zoneOrder = getCurrentPageZones()
     const currentIndex = zoneOrder.indexOf(state.activeZoneId)
 
     if (currentIndex === -1) return null
@@ -197,12 +231,66 @@ export function createNavEngine(config: NavigationEngineConfig) {
   }
 
   /**
+   * Set current page and optionally focus on first zone
+   * @param pageId - ID of the page to set
+   */
+  function setPage(pageId: PageId) {
+    state.currentPage = pageId
+    // Reset active zone when changing pages
+    state.activeZoneId = undefined
+    state.activeItemId = undefined
+
+    // Try to focus on first zone of the page
+    const pageZones = getCurrentPageZones()
+    if (pageZones.length > 0) {
+      // Try to focus on first zone that has items
+      for (const zoneId of pageZones) {
+        const list = itemsByZone.get(zoneId) ?? []
+        const enabledList = getEnabledItems(list)
+        if (enabledList.length > 0) {
+          focus(zoneId)
+          return
+        }
+      }
+
+      // If no zones have items yet, try multiple times with increasing delays
+      // This handles the case when setPage is called before components mount
+      let attempts = 0
+      const maxAttempts = 10
+
+      const tryFocus = () => {
+        attempts++
+        for (const zoneId of pageZones) {
+          const list = itemsByZone.get(zoneId) ?? []
+          const enabledList = getEnabledItems(list)
+          if (enabledList.length > 0) {
+            focus(zoneId)
+            return
+          }
+        }
+
+        // Try again if we haven't exceeded max attempts
+        if (attempts < maxAttempts) {
+          setTimeout(tryFocus, 50)
+        }
+      }
+
+      requestAnimationFrame(() => {
+        tryFocus()
+      })
+    }
+  }
+
+  /**
    * Handle arrow key presses for moving between items
    * For vertical arrows considers the number of columns in the zone
    * to move line by line, and switches zones when at boundaries
    * @param key - Pressed arrow key
    */
   function moveArrow(key: NavigationArrowKey) {
+    if (!state.activeZoneId) {
+      return
+    }
     const cols = config.columnsByZone?.[state.activeZoneId] ?? 1
 
     // Move left: 1 position back
@@ -287,8 +375,11 @@ export function createNavEngine(config: NavigationEngineConfig) {
       return item.onEscape()
     }
 
-    return config.onZoneEscape?.(state.activeZoneId)
+    if (state.activeZoneId) {
+      return config.onZoneEscape?.(state.activeZoneId)
+    }
+    return undefined
   }
 
-  return { register, unregister, focus, moveArrow, enter, escape, state }
+  return { register, unregister, focus, moveArrow, enter, escape, setPage, state }
 }

@@ -2,6 +2,7 @@ import { createBrowserRouter, RouterProvider as BaseRouterProvider, Navigate } f
 import type { FC } from 'react'
 import { RoutePaths } from '@/shared/constants'
 import { HomePage } from '@/pages/home'
+import { MovieDetailsPage } from '@/pages/movie-details'
 
 const router = createBrowserRouter([
   {
@@ -16,8 +17,7 @@ const router = createBrowserRouter([
   },
   {
     path: RoutePaths.MovieDetails,
-    // TODO: Add page
-    element: <div>Movie Details</div>,
+    element: <MovieDetailsPage />,
     loader: ({ params }) => {
       // TODO: Add loader
       return {

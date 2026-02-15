@@ -1,11 +1,22 @@
-import { createNavigationContextValue, NavigationContext, useDisableTab, useDisableWheel } from '@/shared/lib'
+import { RoutePaths } from '@/shared/constants'
+import { createNavigationContextValue, NavigationContext, useDisableTab, useDisableWheel, usePathname } from '@/shared/lib'
 import { useEffect, useMemo, type ReactNode } from 'react'
 
 export function NavigationProvider({ children }: { children: ReactNode }) {
   const { engine, value } = useMemo(() => createNavigationContextValue(), [])
 
+  const pathname = usePathname()
+
   useDisableTab()
   useDisableWheel()
+
+  useEffect(() => {
+    if (pathname === RoutePaths.Home) {
+      engine.setPage('home')
+    } else if (pathname.startsWith('/movie/')) {
+      engine.setPage('movie-details')
+    }
+  }, [pathname, engine])
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -32,15 +43,6 @@ export function NavigationProvider({ children }: { children: ReactNode }) {
     window.addEventListener('keydown', onKeyDown)
 
     return () => window.removeEventListener('keydown', onKeyDown)
-  }, [engine])
-
-  // Initial focus
-  useEffect(() => {
-    // Wait for elements to register
-    const t = window.setTimeout(() => {
-      engine.focus('search')
-    }, 100)
-    return () => window.clearTimeout(t)
   }, [engine])
 
   return <NavigationContext.Provider value={value}>{children}</NavigationContext.Provider>

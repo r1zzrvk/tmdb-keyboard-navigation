@@ -1,6 +1,7 @@
 import { type RefObject } from 'react'
 
-export type ZoneId = 'search' | 'filters' | 'grid' | 'pagination' | 'details'
+export type ZoneId = 'search' | 'filters' | 'grid' | 'pagination' | 'favourites' | 'back-button'
+export type PageId = 'home' | 'movie-details'
 export type NavigationItemId = string
 
 export type NavigationItem<T extends HTMLElement = HTMLElement> = {
@@ -15,11 +16,13 @@ export type NavigationItem<T extends HTMLElement = HTMLElement> = {
 export type NavigationEngineConfig = {
   columnsByZone?: Record<ZoneId, number>
   onZoneEscape?: (zoneId: ZoneId) => void
+  pageZones?: Record<PageId, ZoneId[]>
 }
 
 export type NavigationState = {
-  activeZoneId: ZoneId
+  activeZoneId: ZoneId | undefined
   activeItemId?: NavigationItemId
+  currentPage?: PageId
 }
 
 export type NavigationArrowKey = 'ArrowLeft' | 'ArrowRight' | 'ArrowUp' | 'ArrowDown'
@@ -28,4 +31,5 @@ export interface NavigationContextValue {
   register: <T extends HTMLElement>(item: NavigationItem<T>) => void
   unregister: (zoneId: ZoneId, id: string) => void
   focus: (zoneId: ZoneId, itemId?: string) => void
+  setPage: (pageId: PageId) => void
 }

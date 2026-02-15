@@ -7,12 +7,19 @@ export const NavigationContext = React.createContext<NavigationContextValue | nu
 export function createNavigationContextValue() {
   const engine = createNavEngine({
     columnsByZone: {
+      // Home page
       search: 1, // full width search
       filters: 3, // 3 filters options
       grid: 4, // 4 items in a grid
       pagination: 2, // 2 buttons
-      details: 1, // favorite button
-      // TODO: add back button to list
+
+      // Movie details page
+      favourites: 1, // favorite button
+      'back-button': 1, // back button
+    },
+    pageZones: {
+      'home': ['search', 'filters', 'grid', 'pagination'],
+      'movie-details': ['back-button', 'favourites'],
     },
   })
 
@@ -20,6 +27,7 @@ export function createNavigationContextValue() {
     register: engine.register,
     unregister: engine.unregister,
     focus: engine.focus,
+    setPage: engine.setPage,
   }
 
   return { engine, value }
