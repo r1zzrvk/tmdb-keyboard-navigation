@@ -1,8 +1,10 @@
 import { useEffect, type FC } from "react"
 import type { MovieDetailsProps } from "../../model"
 import { useMovieQuery } from "../../hooks"
-import { Center, Loader, Stack, Text, Title } from "@mantine/core"
-import { MovieBackButton, MovieFavouriteButton } from "@/entities/movie"
+import { Stack, Text, Title } from "@mantine/core"
+import { MovieBackButton } from "@/entities/movie"
+import { PageLoader } from "@/shared/ui"
+import { MovieFavouriteButton } from "@/entities/favourites"
 
 export const MovieDetails: FC<MovieDetailsProps> = ({ id }) => {
   const { data: movie, error, loading } = useMovieQuery(id)
@@ -11,13 +13,8 @@ export const MovieDetails: FC<MovieDetailsProps> = ({ id }) => {
     document.title = movie ? `${movie.title} - Movie Details` : 'Movie Details'
   }, [movie])
 
-  // TODO: add loading component
   if (loading) {
-    return (
-      <Center h="50vh">
-        <Loader size="lg" />
-      </Center>
-    )
+    return <PageLoader />
   }
 
   // TODO: add error handling
@@ -29,7 +26,7 @@ export const MovieDetails: FC<MovieDetailsProps> = ({ id }) => {
     <div>
       <Stack>
         <MovieBackButton />
-        <MovieFavouriteButton />
+        <MovieFavouriteButton movie={movie} />
       </Stack>
       {movie ? (
         <>

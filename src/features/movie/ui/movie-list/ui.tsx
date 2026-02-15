@@ -1,7 +1,7 @@
 import { MovieCard, paginationActions } from "@/entities/movie"
-import { Center, Loader, SimpleGrid } from "@mantine/core"
+import { SimpleGrid } from "@mantine/core"
 import { useAutofocus, useMoviesQuery } from "../../hooks"
-import { Paginator } from "@/shared/ui"
+import { Paginator, PageLoader } from "@/shared/ui"
 import { useDispatch } from "react-redux"
 import { COLS, getOrder } from "../../model"
 
@@ -12,8 +12,7 @@ export const MovieList = () => {
   useAutofocus(loading, movies, page)
 
   if (loading && movies.length === 0) {
-    // TODO: add page loader component
-    return <Center h="70vh"><Loader size="lg" /></Center>
+    return <PageLoader />
   }
 
   if (error) {

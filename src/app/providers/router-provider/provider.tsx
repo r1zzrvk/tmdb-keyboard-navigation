@@ -1,13 +1,20 @@
 import { createBrowserRouter, RouterProvider as BaseRouterProvider, Navigate } from 'react-router-dom'
 import type { FC } from 'react'
+import { Suspense, lazy } from 'react'
 import { RoutePaths } from '@/shared/constants'
-import { HomePage } from '@/pages/home'
-import { MovieDetailsPage } from '@/pages/movie-details'
+import { PageLoader } from '@/shared/ui'
+
+const HomePage = lazy(() => import('@/pages/home').then(module => ({ default: module.HomePage })))
+const MovieDetailsPage = lazy(() => import('@/pages/movie-details').then(module => ({ default: module.MovieDetailsPage })))
 
 const router = createBrowserRouter([
   {
     path: RoutePaths.Home,
-    element: <HomePage />,
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <HomePage />
+      </Suspense>
+    ),
     loader: () => {
       // TODO: Add loader
       return {
@@ -17,7 +24,11 @@ const router = createBrowserRouter([
   },
   {
     path: RoutePaths.MovieDetails,
-    element: <MovieDetailsPage />,
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <MovieDetailsPage />
+      </Suspense>
+    ),
     loader: ({ params }) => {
       // TODO: Add loader
       return {

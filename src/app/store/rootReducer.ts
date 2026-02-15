@@ -1,3 +1,4 @@
+import { favouritesReducer } from '@/entities/favourites'
 import { filterReducer } from '@/entities/filter'
 import { movieQueriesReducer, moviesReducer, moviePaginationReducer } from '@/entities/movie'
 import { searchReducer } from '@/entities/search'
@@ -9,6 +10,7 @@ export const rootReducer = combineReducers({
   search: searchReducer,
   filter: filterReducer,
   moviePagination: moviePaginationReducer,
+  favourites: favouritesReducer,
 })
 
 export type RootState = ReturnType<typeof rootReducer>
