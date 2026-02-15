@@ -9,4 +9,5 @@ export interface FilterButtonProps extends Filter {
   active: boolean
   order: number
   onClick: (filter: FilterId) => void
+  onFocus: () => void
 }

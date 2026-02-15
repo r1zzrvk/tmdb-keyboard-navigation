@@ -23,14 +23,12 @@ export const useMoviesQuery = () => {
   useEffect(() => {
     if (active === 'favorites') return // favorites не грузим через API
 
-    if (searchQuery.trim().length >= 2) {
-      dispatch(moviesApiActions.loadSearch(searchQuery.trim(), page))
-    } else if (active === 'popular') {
+    if (active === 'popular') {
       dispatch(moviesApiActions.loadPopular(page))
     } else if (active === 'now_playing') {
       dispatch(moviesApiActions.loadNowPlaying(page))
     }
-  }, [dispatch, active, searchQuery, page])
+  }, [dispatch, active, page])
 
   return {
     data: movies,

@@ -1,5 +1,5 @@
 import type { ListRequestKind, TmdbMovie, TmdbPagedResponse } from "@/shared/types"
-import { call, put, select, type Effect } from "redux-saga/effects"
+import { call, put, select, delay, type Effect } from "redux-saga/effects"
 import { makeKey, mapMovie } from "../utils"
 import { selectMovieQuery } from "../store"
 import { movieQueriesActions } from "../store/queriesSlice"
@@ -7,7 +7,14 @@ import { fetchMovieDetails, fetchNowPlaying, fetchPopular, searchMovies } from "
 import type { Movie, QueryState } from "../types"
 import { moviesActions } from "../store/moviesSlice"
 import type { LoadDetailsAction, LoadNowPlayingAction, LoadPopularAction, LoadSearchAction } from "../store"
-import { MOVIE_CACHE_TTL } from "../constants"
+import { MOVIE_CACHE_TTL, SEARCH_RATE_LIMIT, SEARCH_RATE_LIMIT_TIME } from "../constants"
+import { filterActions, type FilterId } from "@/entities/filter"
+import { selectFocusedFilter, selectActiveFilter } from "@/entities/filter/model/store"
+import { searchActions } from "@/entities/search"
+import { moviesApiActions } from "../store"
+import { createSlidingWindowRateLimiter } from "@/shared/lib"
+
+const searchLimiter = createSlidingWindowRateLimiter(SEARCH_RATE_LIMIT, SEARCH_RATE_LIMIT_TIME)
 
 /**
  * Loads a list of movies (popular or now_playing).
@@ -77,7 +84,7 @@ function* loadSearch(query: string, page: number): Generator<Effect, void, unkno
     return
   }
 
-  // TODO: add rate limiter
+  yield call(searchLimiter)
   yield put(movieQueriesActions.queryStarted({ key }))
 
   try {
@@ -169,4 +176,52 @@ export function* loadSearchWorker(action: LoadSearchAction): Generator<Effect, v
 
 export function* loadDetailsWorker(action: LoadDetailsAction): Generator<Effect, void, unknown> {
   yield* loadDetails(action.payload.id)
+}
+
+/**
+ * Handles filter activation: immediately activates and loads the filter.
+ */
+export function* filterActivatedWorker(action: ReturnType<typeof filterActions.filterActivated>): Generator<Effect, void, unknown> {
+  const filterId = action.payload
+
+  if (filterId === 'favorites') {
+    return
+  }
+
+  if (filterId === 'popular') yield put(moviesApiActions.loadPopular(1))
+  if (filterId === 'now_playing') yield put(moviesApiActions.loadNowPlaying(1))
+}
+
+/**
+ * Handles filter focus: delays 2s then activates and loads the filter.
+ */
+export function* filterFocusedWorker(action: ReturnType<typeof filterActions.filterFocused>): Generator<Effect, void, unknown> {
+  const filterId = action.payload
+
+  yield delay(2000)
+
+  // Ensure still focused and not already activated
+  const focused = (yield select(selectFocusedFilter)) as FilterId | undefined
+  const active = (yield select(selectActiveFilter)) as FilterId
+
+  if (focused !== filterId || active === filterId) {
+    return
+  }
+
+  yield put(filterActions.filterActivated(filterId))
+  if (filterId === 'popular') yield put(moviesApiActions.loadPopular(1))
+  if (filterId === 'now_playing') yield put(moviesApiActions.loadNowPlaying(1))
+}
+
+/**
+ * Handles search query changes: debounced search with minimum 2 characters.
+ */
+export function* searchQueryChangedWorker(action: ReturnType<typeof searchActions.searchQueryChanged>): Generator<Effect, void, unknown> {
+  const query = action.payload.trim()
+
+  if (query.length < 2) {
+    return
+  }
+
+  yield put(moviesApiActions.loadSearch(query, 1))
 }

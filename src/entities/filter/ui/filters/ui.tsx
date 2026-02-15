@@ -17,6 +17,10 @@ export const Filters = () => {
     dispatch(searchActions.searchQueryChanged(value))
   }
 
+  const handleFilterFocus = (filter: FilterId) => {
+    dispatch(filterActions.filterFocused(filter))
+  }
+
   return (
     <Stack gap="sm" mb="md">
       <SearchInput value={query} onChange={handleSearchChange} />
@@ -29,6 +33,7 @@ export const Filters = () => {
             label={label}
             active={active === id}
             onClick={handleFilterClick}
+            onFocus={() => handleFilterFocus(id)}
           />
         ))}
       </Group>
