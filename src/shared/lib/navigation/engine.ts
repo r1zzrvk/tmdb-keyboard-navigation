@@ -44,6 +44,16 @@ export function createNavEngine(config: NavigationEngineConfig) {
   }
 
   /**
+   * Smoothly scroll element into view
+   * @param element - Element to scroll into view
+   */
+  function smoothScrollIntoView(element: HTMLElement) {
+    requestAnimationFrame(() => {
+      element.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' })
+    })
+  }
+
+  /**
    * Register new navigation item or update existing one
    * Items are automatically sorted by order field
    * @param item - Navigation item with zone, order and ref to DOM element
@@ -108,8 +118,8 @@ export function createNavEngine(config: NavigationEngineConfig) {
 
     // Focus and scroll the target element into view
     if (target.ref.current) {
-      target.ref.current.focus()
-      target.ref.current.scrollIntoView({ block: 'nearest', inline: 'nearest' })
+      target.ref.current.focus({ preventScroll: true } as FocusOptions)
+      smoothScrollIntoView(target.ref.current)
     }
   }
 
@@ -164,8 +174,8 @@ export function createNavEngine(config: NavigationEngineConfig) {
 
     // Focus and scroll the next item into view
     if (nextItem.ref.current) {
-      nextItem.ref.current.focus()
-      nextItem.ref.current.scrollIntoView({ block: 'nearest', inline: 'nearest' })
+      nextItem.ref.current.focus({ preventScroll: true } as FocusOptions)
+      smoothScrollIntoView(nextItem.ref.current)
     }
 
     return true
