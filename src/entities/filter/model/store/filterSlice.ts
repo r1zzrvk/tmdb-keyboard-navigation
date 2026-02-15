@@ -4,6 +4,7 @@ import type { FilterId } from '../types'
 
 type State = {
   active: FilterId
+  focused?: FilterId // For focus after 2s
 }
 
 const initialState: State = { active: 'popular' }
@@ -14,6 +15,9 @@ export const filterSlice = createSlice({
   reducers: {
     filterActivated(state, action: PayloadAction<FilterId>) {
       state.active = action.payload
+    },
+    filterFocused(state, action: PayloadAction<FilterId>) {
+      state.focused = action.payload
     },
   },
 })

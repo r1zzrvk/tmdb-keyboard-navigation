@@ -16,3 +16,9 @@ export const getKey = (active: FilterId, page: number, query: string): string | 
 
   return null // favorites
 }
+
+export const getOrder = (index: number, cols: number) => {
+  const row = Math.floor(index / cols)
+  const col = index % cols
+  return row * cols + col
+}

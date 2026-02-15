@@ -1,6 +1,7 @@
 export { App } from './app'
 export { StoreProvider } from './providers/store-provider'
 export { RouterProvider } from './providers/router-provider'
+export { NavigationProvider } from './providers/navigation-provider'
 export { MantineProvider } from './providers/mantine-provider'
 export { store } from './store'
 export type { AppDispatch } from './store'

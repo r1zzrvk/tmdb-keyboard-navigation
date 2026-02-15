@@ -1,4 +1,4 @@
-import { Stack } from "@mantine/core"
+import { Group, Stack } from "@mantine/core"
 import { filterActions, filters, selectActiveFilter, type FilterId } from "../../model"
 import { FilterButton } from "../filter-button"
 import { useDispatch, useSelector } from "react-redux"
@@ -19,16 +19,19 @@ export const Filters = () => {
 
   return (
     <Stack gap="sm" mb="md">
-      {filters.map(({ id, label }) => (
-        <FilterButton
-          key={id}
-          id={id}
-          label={label}
-          active={active === id}
-          onClick={handleFilterClick}
-        />
-      ))}
       <SearchInput value={query} onChange={handleSearchChange} />
+      <Group gap="sm">
+        {filters.map(({ id, label }, index) => (
+          <FilterButton
+            key={id}
+            id={id}
+            order={index}
+            label={label}
+            active={active === id}
+            onClick={handleFilterClick}
+          />
+        ))}
+      </Group>
     </Stack>
   )
 }

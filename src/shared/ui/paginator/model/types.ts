@@ -1,4 +1,6 @@
 export interface PaginatorButtonProps {
+  id: string
+  order: number
   label: string
   disabled: boolean
   onClick: () => void

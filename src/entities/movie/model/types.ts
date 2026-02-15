@@ -26,6 +26,6 @@ export interface QueryState {
   fetchedAt?: number
 }
 
-// TODO: Remove this when adding more props to the MovieCardProps
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface MovieCardProps extends Movie { }
+export interface MovieCardProps extends Movie {
+  order: number
+}
