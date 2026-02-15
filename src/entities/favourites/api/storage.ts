@@ -11,7 +11,17 @@ export function loadFavoriteMovies(): Movie[] {
 
     const parsed = JSON.parse(raw)
 
-    return Array.isArray(parsed) ? parsed.filter(x => Number.isFinite(x)) : []
+    if (!Array.isArray(parsed)) {
+      return []
+    }
+
+    // Validate that each item is a valid Movie object
+    return parsed.filter((x): x is Movie =>
+      x &&
+      typeof x === 'object' &&
+      typeof x.id === 'number' &&
+      typeof x.title === 'string'
+    )
   } catch {
     return []
   }

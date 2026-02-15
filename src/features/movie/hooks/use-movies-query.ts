@@ -5,7 +5,7 @@ import { getKey } from "../model"
 import { moviesApiActions, paginationActions, selectMoviePage, selectMovieQuery, selectMovies } from "@/entities/movie"
 
 import { useEffect } from "react"
-import { selectFavourites } from "@/entities/favourites"
+import { favouritesActions, selectFavourites } from "@/entities/favourites"
 
 export const useMoviesQuery = () => {
   const dispatch = useDispatch()
@@ -23,7 +23,10 @@ export const useMoviesQuery = () => {
   }, [dispatch, active, searchQuery])
 
   useEffect(() => {
-    if (active === 'favorites') return
+    if (active === 'favorites') {
+      dispatch(favouritesActions.loadFavoriteMovies())
+      return
+    }
 
     if (active === 'popular') {
       dispatch(moviesApiActions.loadPopular(page))

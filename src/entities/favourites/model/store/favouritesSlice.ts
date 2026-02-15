@@ -5,7 +5,7 @@ import type { Movie } from '@/entities/movie'
 
 type State = { movies: Movie[] }
 
-const initialState: State = { movies: loadFavoriteMovies() }
+const initialState: State = { movies: [] }
 
 export const favouritesSlice = createSlice({
   name: 'favourites',
@@ -22,7 +22,10 @@ export const favouritesSlice = createSlice({
 
       saveFavoriteMovies(state.movies)
     },
-  },
+    loadFavoriteMovies(state) {
+      state.movies = loadFavoriteMovies()
+    }
+  }
 })
 
 export const favouritesActions = favouritesSlice.actions

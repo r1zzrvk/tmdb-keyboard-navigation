@@ -1,15 +1,20 @@
 import { MovieCard, paginationActions } from "@/entities/movie"
 import { SimpleGrid } from "@mantine/core"
 import { useAutofocus, useMoviesQuery } from "../../hooks"
-import { Paginator, PageLoader } from "@/shared/ui"
+import { Paginator, PageLoader, NoData } from "@/shared/ui"
 import { useDispatch } from "react-redux"
 import { COLS, getOrder } from "../../model"
+import { useEffect } from "react"
 
 export const MovieList = () => {
   const dispatch = useDispatch()
   const { data: movies, error, loading, page, totalPages } = useMoviesQuery()
 
   useAutofocus(loading, movies, page)
+
+  useEffect(() => {
+    document.title = 'Movies'
+  }, [])
 
   if (loading && movies.length === 0) {
     return <PageLoader />
@@ -18,6 +23,10 @@ export const MovieList = () => {
   if (error) {
     // TODO: add error handling
     return null
+  }
+
+  if (movies.length === 0) {
+    return <NoData />
   }
 
   return (

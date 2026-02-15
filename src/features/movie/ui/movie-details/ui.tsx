@@ -3,7 +3,7 @@ import type { MovieDetailsProps } from "../../model"
 import { useMovieQuery } from "../../hooks"
 import { Stack, Text, Title } from "@mantine/core"
 import { MovieBackButton } from "@/entities/movie"
-import { PageLoader } from "@/shared/ui"
+import { NoData, PageLoader } from "@/shared/ui"
 import { MovieFavouriteButton } from "@/entities/favourites"
 
 export const MovieDetails: FC<MovieDetailsProps> = ({ id }) => {
@@ -20,6 +20,10 @@ export const MovieDetails: FC<MovieDetailsProps> = ({ id }) => {
   // TODO: add error handling
   if (error) {
     return null
+  }
+
+  if (!movie) {
+    return <NoData />
   }
 
   return (
