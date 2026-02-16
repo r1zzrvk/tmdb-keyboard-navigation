@@ -19,6 +19,9 @@ export const filterSlice = createSlice({
     filterFocused(state, action: PayloadAction<FilterId>) {
       state.focused = action.payload
     },
+    filterBlurred(state) {
+      state.focused = undefined
+    },
   },
 })
 

@@ -22,6 +22,10 @@ export const Filters = () => {
     dispatch(filterActions.filterFocused(filter))
   }, [dispatch])
 
+  const handleFilterBlur = useCallback(() => {
+    dispatch(filterActions.filterBlurred())
+  }, [dispatch])
+
   return (
     <Stack gap="sm" mb="md">
       <SearchInput value={query} onChange={handleSearchChange} />
@@ -35,6 +39,7 @@ export const Filters = () => {
             active={active === id}
             onClick={handleFilterClick}
             onFocus={() => handleFilterFocus(id)}
+            onBlur={handleFilterBlur}
           />
         ))}
       </Group>

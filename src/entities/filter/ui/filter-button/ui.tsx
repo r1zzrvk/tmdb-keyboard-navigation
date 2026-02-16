@@ -4,7 +4,7 @@ import type { FilterButtonProps } from "../../model"
 import { Button } from "@mantine/core"
 import { useNavigationItem } from "@/shared/lib"
 
-export const FilterButton: FC<FilterButtonProps> = memo(({ id, active, order, label, onClick, onFocus }) => {
+export const FilterButton: FC<FilterButtonProps> = memo(({ id, active, order, label, onClick, onFocus, onBlur }) => {
   const handleClick = useCallback(() => {
     onClick(id)
   }, [onClick, id])
@@ -27,6 +27,7 @@ export const FilterButton: FC<FilterButtonProps> = memo(({ id, active, order, la
       variant={active ? 'filled' : 'light'}
       onFocus={onFocus}
       onClick={handleClick}
+      onBlur={onBlur}
     >
       {label}
     </Button>

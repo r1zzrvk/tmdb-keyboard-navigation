@@ -10,4 +10,5 @@ export interface FilterButtonProps extends Filter {
   order: number
   onClick: (filter: FilterId) => void
   onFocus: () => void
+  onBlur: () => void
 }
