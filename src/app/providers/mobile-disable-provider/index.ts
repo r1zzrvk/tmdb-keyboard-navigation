@@ -1,0 +1,1 @@
+export { MobileDisableProvider } from './provider'
