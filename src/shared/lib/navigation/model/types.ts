@@ -32,4 +32,5 @@ export interface NavigationContextValue {
   unregister: (zoneId: ZoneId, id: string) => void
   focus: (zoneId: ZoneId, itemId?: string) => void
   setPage: (pageId: PageId) => void
+  getActiveZoneId: () => ZoneId | undefined
 }

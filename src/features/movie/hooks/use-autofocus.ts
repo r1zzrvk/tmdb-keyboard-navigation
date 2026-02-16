@@ -11,6 +11,11 @@ export const useAutofocus = (loading: boolean, movies: Movie[], page?: number) =
   // Auto-focus on grid when page changes and data is loaded
   useEffect(() => {
     if (!loading && movies.length > 0 && page && navigationContext && !searchFocused) {
+      const activeZoneId = navigationContext.getActiveZoneId()
+      // Don't auto-focus if user is on search or filters he is actively typing
+      if (activeZoneId === 'search' || activeZoneId === 'filters') {
+        return
+      }
       // Use requestAnimationFrame to ensure DOM elements are registered after render
       const rafId = requestAnimationFrame(() => {
         navigationContext.focus('grid')

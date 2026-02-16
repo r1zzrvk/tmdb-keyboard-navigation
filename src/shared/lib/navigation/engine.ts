@@ -381,5 +381,9 @@ export function createNavEngine(config: NavigationEngineConfig) {
     return undefined
   }
 
-  return { register, unregister, focus, moveArrow, enter, escape, setPage, state }
+  function getActiveZoneId() {
+    return state.activeZoneId
+  }
+
+  return { register, unregister, focus, moveArrow, enter, escape, setPage, getActiveZoneId, state }
 }

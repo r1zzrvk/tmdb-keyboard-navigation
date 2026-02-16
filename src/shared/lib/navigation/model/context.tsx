@@ -28,6 +28,7 @@ export function createNavigationContextValue() {
     unregister: engine.unregister,
     focus: engine.focus,
     setPage: engine.setPage,
+    getActiveZoneId: engine.getActiveZoneId,
   }
 
   return { engine, value }
