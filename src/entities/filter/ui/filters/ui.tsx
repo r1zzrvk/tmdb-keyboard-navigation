@@ -3,23 +3,24 @@ import { filterActions, filters, selectActiveFilter, type FilterId } from "../..
 import { FilterButton } from "../filter-button"
 import { useDispatch, useSelector } from "react-redux"
 import { searchActions, SearchInput, selectSearchQuery } from "@/entities/search"
+import { useCallback } from "react"
 
 export const Filters = () => {
   const dispatch = useDispatch()
   const active = useSelector(selectActiveFilter)
   const query = useSelector(selectSearchQuery)
 
-  const handleFilterClick = (filter: FilterId) => {
+  const handleFilterClick = useCallback((filter: FilterId) => {
     dispatch(filterActions.filterActivated(filter))
-  }
+  }, [dispatch])
 
-  const handleSearchChange = (value: string) => {
+  const handleSearchChange = useCallback((value: string) => {
     dispatch(searchActions.searchQueryChanged(value))
-  }
+  }, [dispatch])
 
-  const handleFilterFocus = (filter: FilterId) => {
+  const handleFilterFocus = useCallback((filter: FilterId) => {
     dispatch(filterActions.filterFocused(filter))
-  }
+  }, [dispatch])
 
   return (
     <Stack gap="sm" mb="md">

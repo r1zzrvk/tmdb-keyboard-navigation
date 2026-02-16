@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { getKey } from "../model"
 import { moviesApiActions, paginationActions, selectMoviePage, selectMovieQuery, selectMovies } from "@/entities/movie"
 
-import { useEffect } from "react"
+import { useEffect, useMemo } from "react"
 import { favouritesActions, selectFavourites } from "@/entities/favourites"
 
 export const useMoviesQuery = () => {
@@ -13,7 +13,7 @@ export const useMoviesQuery = () => {
   const searchQuery = useSelector(selectSearchQuery)
   const page = useSelector(selectMoviePage)
 
-  const key = getKey(active, page, searchQuery)
+  const key = useMemo(() => getKey(active, page, searchQuery), [active, page, searchQuery])
   const movies = useSelector(selectMovies(key ?? ''))
   const queryState = useSelector(selectMovieQuery(key ?? ''))
   const favourites = useSelector(selectFavourites)

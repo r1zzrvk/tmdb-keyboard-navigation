@@ -1,4 +1,4 @@
-import { useEffect, type FC } from "react"
+import { useEffect, memo, type FC } from "react"
 import type { MovieDetailsProps } from "../../model"
 import { useMovieQuery } from "../../hooks"
 import { Stack, Text, Title } from "@mantine/core"
@@ -6,7 +6,7 @@ import { MovieBackButton } from "@/entities/movie"
 import { NoData, PageLoader } from "@/shared/ui"
 import { MovieFavouriteButton } from "@/entities/favourites"
 
-export const MovieDetails: FC<MovieDetailsProps> = ({ id }) => {
+export const MovieDetails: FC<MovieDetailsProps> = memo(({ id }) => {
   const { data: movie, error, loading } = useMovieQuery(id)
 
   useEffect(() => {
@@ -32,17 +32,11 @@ export const MovieDetails: FC<MovieDetailsProps> = ({ id }) => {
         <MovieBackButton />
         <MovieFavouriteButton movie={movie} />
       </Stack>
-      {movie ? (
-        <>
-          <Title order={2}>{movie.title}</Title>
-          <Text c="dimmed" mt="sm">
-            {movie.releaseDate ?? 'Unknown release date'}
-          </Text>
-          <Text mt="md">{movie.overview ?? 'No overview'}</Text>
-        </>
-      ) : (
-        <Text c="dimmed">Movie not found</Text>
-      )}
+      <Title order={2}>{movie.title}</Title>
+      <Text c="dimmed" mt="sm">
+        {movie.releaseDate ?? 'Unknown release date'}
+      </Text>
+      <Text mt="md">{movie.overview ?? 'No overview'}</Text>
     </div>
   )
-}
+})

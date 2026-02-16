@@ -4,7 +4,7 @@ import { useAutofocus, useMoviesQuery } from "../../hooks"
 import { Paginator, PageLoader, NoData } from "@/shared/ui"
 import { useDispatch } from "react-redux"
 import { COLS, getOrder } from "../../model"
-import { useEffect } from "react"
+import { useEffect, useCallback, useMemo } from "react"
 
 export const MovieList = () => {
   const dispatch = useDispatch()
@@ -15,6 +15,21 @@ export const MovieList = () => {
   useEffect(() => {
     document.title = 'Movies'
   }, [])
+
+  const handlePrev = useCallback(() => {
+    dispatch(paginationActions.prevPage())
+  }, [dispatch])
+
+  const handleNext = useCallback(() => {
+    dispatch(paginationActions.nextPage())
+  }, [dispatch])
+
+  const movieCards = useMemo(() =>
+    movies.map((movie, index) => (
+      <MovieCard key={movie.id} order={getOrder(index, COLS)} {...movie} />
+    )),
+    [movies]
+  )
 
   if (loading && movies.length === 0) {
     return <PageLoader />
@@ -32,16 +47,14 @@ export const MovieList = () => {
   return (
     <div>
       <SimpleGrid cols={COLS}>
-        {movies.map((movie, index) => (
-          <MovieCard key={movie.id} order={getOrder(index, COLS)} {...movie} />
-        ))}
+        {movieCards}
       </SimpleGrid>
       {totalPages && page && (
         <Paginator
           page={page}
           totalPages={totalPages}
-          onPrev={() => dispatch(paginationActions.prevPage())}
-          onNext={() => dispatch(paginationActions.nextPage())}
+          onPrev={handlePrev}
+          onNext={handleNext}
         />
       )}
     </div>
