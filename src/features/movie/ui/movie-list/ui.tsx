@@ -1,7 +1,7 @@
 import { MovieCard, paginationActions } from "@/entities/movie"
 import { SimpleGrid } from "@mantine/core"
 import { useAutofocus, useMoviesQuery } from "../../hooks"
-import { Paginator, PageLoader, NoData } from "@/shared/ui"
+import { Paginator, PageLoader, NoData, Error } from "@/shared/ui"
 import { useDispatch } from "react-redux"
 import { COLS, getOrder } from "../../model"
 import { useEffect, useCallback, useMemo } from "react"
@@ -36,8 +36,7 @@ export const MovieList = () => {
   }
 
   if (error) {
-    // TODO: add error handling
-    return null
+    return <Error message={error} />
   }
 
   if (movies.length === 0) {

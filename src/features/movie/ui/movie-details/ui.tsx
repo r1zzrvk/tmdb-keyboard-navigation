@@ -3,7 +3,7 @@ import type { MovieDetailsProps } from "../../model"
 import { useMovieQuery } from "../../hooks"
 import { Stack, Text, Title } from "@mantine/core"
 import { MovieBackButton } from "@/entities/movie"
-import { NoData, PageLoader } from "@/shared/ui"
+import { NoData, PageLoader, Error } from "@/shared/ui"
 import { MovieFavouriteButton } from "@/entities/favourites"
 
 export const MovieDetails: FC<MovieDetailsProps> = memo(({ id }) => {
@@ -17,9 +17,8 @@ export const MovieDetails: FC<MovieDetailsProps> = memo(({ id }) => {
     return <PageLoader />
   }
 
-  // TODO: add error handling
   if (error) {
-    return null
+    return <Error message={error} />
   }
 
   if (!movie) {
