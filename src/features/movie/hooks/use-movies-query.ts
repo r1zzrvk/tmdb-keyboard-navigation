@@ -35,10 +35,13 @@ export const useMoviesQuery = () => {
     }
   }, [dispatch, active, page])
 
+  // If there's a search query but no queryState yet, we're in a loading state
+  const isSearchLoading = searchQuery.trim().length >= 2 && !queryState && movies.length === 0
+
   return {
     data: active === 'favorites' ? favourites : movies,
     error: queryState?.error,
-    loading: queryState?.status === 'loading',
+    loading: queryState?.status === 'loading' || isSearchLoading,
     totalPages: queryState?.totalPages,
     page: queryState?.page,
   }
