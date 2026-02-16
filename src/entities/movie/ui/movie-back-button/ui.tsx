@@ -14,6 +14,7 @@ export const MovieBackButton: FC = () => {
     zoneId: 'back-button',
     order: 0,
     onEnter: handleBack,
+    onEscape: handleBack,
   })
 
   return (
