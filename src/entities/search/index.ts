@@ -1,2 +1,2 @@
-export { searchReducer, searchActions, selectSearchQuery } from './model'
+export { searchReducer, searchActions, selectSearchQuery, selectSearchFocused } from './model'
 export { SearchInput } from './ui'

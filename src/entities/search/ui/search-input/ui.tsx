@@ -4,7 +4,7 @@ import type { FC } from "react"
 import { memo, useCallback } from "react"
 import type { SearchInputProps } from "../../model"
 
-export const SearchInput: FC<SearchInputProps> = memo(({ value, onChange }) => {
+export const SearchInput: FC<SearchInputProps> = memo(({ value, onChange, onFocus, onBlur }) => {
   const handleEnter = useCallback(() => {
     onChange(value)
   }, [onChange, value])
@@ -12,6 +12,14 @@ export const SearchInput: FC<SearchInputProps> = memo(({ value, onChange }) => {
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     onChange(e.currentTarget.value)
   }, [onChange])
+
+  const handleFocus = useCallback(() => {
+    onFocus?.()
+  }, [onFocus])
+
+  const handleBlur = useCallback(() => {
+    onBlur?.()
+  }, [onBlur])
 
   const { ref } = useNavigationItem<HTMLInputElement>({
     id: 'search',
@@ -26,6 +34,8 @@ export const SearchInput: FC<SearchInputProps> = memo(({ value, onChange }) => {
     placeholder="Search"
     value={value}
     onChange={handleChange}
+    onFocus={handleFocus}
+    onBlur={handleBlur}
     style={{ flex: 1 }}
   />
 })

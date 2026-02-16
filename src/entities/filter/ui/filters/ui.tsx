@@ -26,9 +26,17 @@ export const Filters = () => {
     dispatch(filterActions.filterBlurred())
   }, [dispatch])
 
+  const handleSearchFocus = useCallback(() => {
+    dispatch(searchActions.searchFocused())
+  }, [dispatch])
+
+  const handleSearchBlur = useCallback(() => {
+    dispatch(searchActions.searchBlurred())
+  }, [dispatch])
+
   return (
     <Stack gap="sm" mb="md">
-      <SearchInput value={query} onChange={handleSearchChange} />
+      <SearchInput value={query} onChange={handleSearchChange} onFocus={handleSearchFocus} onBlur={handleSearchBlur} />
       <Group gap="sm">
         {filters.map(({ id, label }, index) => (
           <FilterButton
