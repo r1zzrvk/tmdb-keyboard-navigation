@@ -50,7 +50,7 @@ export function createNavEngine(config: NavigationEngineConfig) {
    */
   function smoothScrollIntoView(element: HTMLElement) {
     requestAnimationFrame(() => {
-      element.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' })
+      element.scrollIntoView({ block: 'center', inline: 'center', behavior: 'smooth' })
     })
   }
 
