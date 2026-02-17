@@ -28,6 +28,7 @@ export const FilterButton: FC<FilterButtonProps> = memo(({ id, active, order, la
       onFocus={onFocus}
       onClick={handleClick}
       onBlur={onBlur}
+      size="lg"
     >
       {label}
     </Button>

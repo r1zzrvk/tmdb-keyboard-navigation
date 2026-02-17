@@ -1,25 +1,28 @@
 import { imageBaseUrl, imageSizes } from '@/shared/constants'
 import { useFocusRing } from '@/shared/hooks'
 import { useNavigationItem } from '@/shared/lib'
-import { Card, Image, Text } from '@mantine/core'
+import { BackgroundImage, Card, Text } from '@mantine/core'
 import type { FC } from 'react'
 import { memo, useCallback, useMemo } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { selectMoviePage, type MovieCardProps } from '../../model'
 import { useSelector } from 'react-redux'
+import { selectFavourites } from '@/entities/favourites'
+import { HeartIcon } from '@phosphor-icons/react'
 
-export const MovieCard: FC<MovieCardProps> = memo(({ posterPath, id, title, overview, order }) => {
+export const MovieCard: FC<MovieCardProps> = memo(({ backdropPath, id, title, overview: _overview, order, posterPath }) => {
   const navigate = useNavigate()
+  const favourites = useSelector(selectFavourites)
+  const isFavourite = useMemo(() => favourites.some(favMovie => favMovie.id === id), [favourites, id])
   const [searchParams, setSearchParams] = useSearchParams()
   const page = useSelector(selectMoviePage)
 
   const saveStateToListUrl = useCallback(() => {
     const params = new URLSearchParams(searchParams)
-    params.set("activeItem", `movie_${id}`)
     params.set("page", page.toString())
 
     setSearchParams(params, { replace: true })
-  }, [searchParams, setSearchParams, id, page])
+  }, [searchParams, setSearchParams, page])
 
   const handleClick = useCallback(() => {
     navigate(`/movie/${id}`)
@@ -34,22 +37,57 @@ export const MovieCard: FC<MovieCardProps> = memo(({ posterPath, id, title, over
 
   useFocusRing(ref)
 
-  const img = useMemo(() =>
-    posterPath ? `${imageBaseUrl}${imageSizes.xl}${posterPath}` : undefined,
-    [posterPath]
+  const img = useMemo(
+    () =>
+      posterPath
+        ? `${imageBaseUrl}${imageSizes.xl}${posterPath}`
+        : `${imageBaseUrl}${imageSizes.xl}${backdropPath}`,
+    [backdropPath, posterPath]
   )
 
-  const emptyDivStyle = useMemo(() => ({ height: 180 }), [])
-
   return (
-    <Card ref={ref} tabIndex={-1} withBorder onFocus={saveStateToListUrl}>
-      {img ? <Image src={img} height={180} alt={title} /> : <div style={emptyDivStyle} />}
-      <Text fw={600} mt="sm" lineClamp={2}>
-        {title}
-      </Text>
-      <Text size="sm" c="dimmed" lineClamp={3}>
-        {overview ?? 'No overview'}
-      </Text>
-    </Card>
+    <Card ref={ref} tabIndex={-1} onFocus={saveStateToListUrl}>
+      <Card.Section>
+        <BackgroundImage
+          src={img}
+          p="sm"
+          style={{
+            aspectRatio: '2 / 3',
+            position: 'relative',
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              backgroundImage:
+                'linear-gradient(180deg,rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 1) 100%)',
+              pointerEvents: 'none',
+            }}
+          />
+
+          <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', flex: 1 }}>
+            {isFavourite && (
+              <HeartIcon
+                size={32}
+                weight="duotone"
+                color="white"
+                style={{
+                  alignSelf: 'flex-end',
+                }}
+              />
+            )}
+
+            <div style={{ flex: 1 }} />
+
+            <Text fz="h3" fw={600} lineClamp={2}>
+              {title}
+            </Text>
+          </div>
+        </BackgroundImage>
+      </Card.Section>
+    </Card >
   )
 })

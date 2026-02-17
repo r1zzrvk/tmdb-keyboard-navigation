@@ -3,6 +3,7 @@ import { TextInput } from "@mantine/core"
 import type { FC } from "react"
 import { memo, useCallback } from "react"
 import type { SearchInputProps } from "../../model"
+import { MagnifyingGlassIcon } from "@phosphor-icons/react"
 
 export const SearchInput: FC<SearchInputProps> = memo(({ value, onChange, onFocus, onBlur }) => {
   const handleEnter = useCallback(() => {
@@ -33,6 +34,9 @@ export const SearchInput: FC<SearchInputProps> = memo(({ value, onChange, onFocu
     tabIndex={-1}
     placeholder="Search"
     value={value}
+    size="xl"
+    variant="filled"
+    leftSection={<MagnifyingGlassIcon size={32} weight="bold" />}
     onChange={handleChange}
     onFocus={handleFocus}
     onBlur={handleBlur}

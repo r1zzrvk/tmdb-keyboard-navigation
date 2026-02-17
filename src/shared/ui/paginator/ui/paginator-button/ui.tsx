@@ -25,7 +25,7 @@ export const PaginatorButton: FC<PaginatorButtonProps> = memo(({
   })
 
   return (
-    <Button ref={ref} tabIndex={-1} variant="light" disabled={disabled} onClick={onClick}>
+    <Button ref={ref} tabIndex={-1} variant="light" disabled={disabled} onClick={onClick} size="lg">
       {label}
     </Button>
   )

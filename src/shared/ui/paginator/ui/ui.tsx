@@ -9,9 +9,9 @@ export const Paginator: FC<PaginatorProps> = memo(({ page, totalPages, onPrev, o
   const canGoNext = useMemo(() => totalPages ? page < totalPages : false, [totalPages, page])
 
   return (
-    <Stack align="center" mt="xl">
-      <Text size="sm">Page {page} of {totalPages}</Text>
-      <Group gap="sm">
+    <Stack align="center" my="xl">
+      <Text size="xl">Page {page} of {totalPages}</Text>
+      <Group gap="lg">
         <PaginatorButton
           id="page_prev"
           order={0}
