@@ -1,5 +1,5 @@
 import { makeKey, moviesApiActions, selectMovieById, selectMovieQuery } from "@/entities/movie"
-import { useEffect } from "react"
+import { useEffect, useMemo } from "react"
 import { useDispatch, useSelector } from "react-redux"
 
 /**
@@ -8,11 +8,11 @@ import { useDispatch, useSelector } from "react-redux"
 export const useMovieQuery = (id: number) => {
   const dispatch = useDispatch()
   const movie = useSelector(selectMovieById(id))
-  const detailsKey = makeKey('details', { id })
+  const detailsKey = useMemo(() => makeKey('details', { id }), [id])
   const queryState = useSelector(selectMovieQuery(detailsKey))
 
   useEffect(() => {
-    if (Number.isFinite(id)) {
+    if (Number.isFinite(id) && id > 0) {
       dispatch(moviesApiActions.loadDetails(id))
     }
   }, [dispatch, id])

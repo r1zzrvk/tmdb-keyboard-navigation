@@ -1,16 +1,16 @@
 import type { ListRequestKind, TmdbMovie, TmdbPagedResponse } from "@/shared/types"
 import { call, put, select, delay, type Effect } from "redux-saga/effects"
 import { makeKey, mapMovie } from "../utils"
-import { paginationActions, selectMovieQuery } from "../store"
+import { paginationActions, selectMovieQuery, selectMoviePage } from "../store"
 import { movieQueriesActions } from "../store/queriesSlice"
 import { fetchMovieDetails, fetchNowPlaying, fetchPopular, searchMovies } from "@/shared/api"
 import type { Movie, QueryState } from "../types"
 import { moviesActions } from "../store/moviesSlice"
 import type { LoadDetailsAction, LoadNowPlayingAction, LoadPopularAction, LoadSearchAction } from "../store"
-import { MOVIE_CACHE_TTL, SEARCH_RATE_LIMIT, SEARCH_RATE_LIMIT_TIME } from "../constants"
+import { FILTER_FOCUS_DELAY, MOVIE_CACHE_TTL, SEARCH_RATE_LIMIT, SEARCH_RATE_LIMIT_TIME } from "../constants"
 import { filterActions, type FilterId } from "@/entities/filter"
 import { selectFocusedFilter, selectActiveFilter } from "@/entities/filter/model/store"
-import { searchActions } from "@/entities/search"
+import { searchActions, selectSearchQuery } from "@/entities/search"
 import { moviesApiActions } from "../store"
 import { createSlidingWindowRateLimiter } from "@/shared/lib"
 
@@ -43,7 +43,7 @@ function* loadList(kind: ListRequestKind, page: number): Generator<Effect, void,
         break
     }
 
-    const movies: Movie[] = response.results.map(mapMovie)
+    const movies: Movie[] = (response.results || []).map(mapMovie)
 
     // Save the movies to the normalized store
     yield put(moviesActions.upsertMany(movies))
@@ -90,7 +90,7 @@ function* loadSearch(query: string, page: number): Generator<Effect, void, unkno
   try {
     const response = (yield call(searchMovies, query, page)) as TmdbPagedResponse<TmdbMovie>
 
-    const movies: Movie[] = response.results.map(mapMovie)
+    const movies: Movie[] = (response.results || []).map(mapMovie)
 
     // Save the movies to the normalized store
     yield put(moviesActions.upsertMany(movies))
@@ -181,10 +181,10 @@ export function* loadDetailsWorker(action: LoadDetailsAction): Generator<Effect,
 /**
  * Handles filter focus: delays 2s then activates and loads the filter.
  */
-export function* filterFocusedWorker(action: ReturnType<typeof filterActions.filterFocused>): Generator<Effect, void, unknown> {
+export function* handleFilterFocused(action: ReturnType<typeof filterActions.filterFocused>): Generator<Effect, void, unknown> {
   const filterId = action.payload
 
-  yield delay(2000)
+  yield delay(FILTER_FOCUS_DELAY)
 
   // Ensure still focused and not already activated
   const focused = (yield select(selectFocusedFilter)) as FilterId | undefined
@@ -201,7 +201,7 @@ export function* filterFocusedWorker(action: ReturnType<typeof filterActions.fil
 /**
  * Handles search query changes: debounced search with minimum 2 characters.
  */
-export function* searchQueryChangedWorker(action: ReturnType<typeof searchActions.searchQueryChanged>): Generator<Effect, void, unknown> {
+export function* handleSearchQueryChanged(action: ReturnType<typeof searchActions.searchQueryChanged>): Generator<Effect, void, unknown> {
   const query = action.payload.trim()
 
   if (query.length < 2) {
@@ -210,4 +210,46 @@ export function* searchQueryChangedWorker(action: ReturnType<typeof searchAction
 
   yield put(paginationActions.resetPage())
   yield put(moviesApiActions.loadSearch(query, 1))
+}
+
+/**
+ * Handles filter activation: loads movies for the activated filter.
+ */
+export function* handleFilterActivated(action: ReturnType<typeof filterActions.filterActivated>): Generator<Effect, void, unknown> {
+  const filterId = action.payload
+
+  if (filterId === 'favorites') {
+    // Favorites handled separately
+    return
+  }
+
+  yield put(paginationActions.resetPage())
+
+  if (filterId === 'popular') {
+    yield put(moviesApiActions.loadPopular(1))
+  } else if (filterId === 'now_playing') {
+    yield put(moviesApiActions.loadNowPlaying(1))
+  }
+}
+
+/**
+ * Handles page changes: loads movies for current filter/search with new page.
+ */
+export function* handlePageChanged(): Generator<Effect, void, unknown> {
+  const active = (yield select(selectActiveFilter)) as FilterId
+  const searchQuery = (yield select(selectSearchQuery)) as string
+  const page = (yield select(selectMoviePage)) as number
+
+  if (active === 'favorites') {
+    // Favorites don't need page-based loading
+    return
+  }
+
+  if (searchQuery.trim().length >= 2) {
+    yield put(moviesApiActions.loadSearch(searchQuery, page))
+  } else if (active === 'popular') {
+    yield put(moviesApiActions.loadPopular(page))
+  } else if (active === 'now_playing') {
+    yield put(moviesApiActions.loadNowPlaying(page))
+  }
 }

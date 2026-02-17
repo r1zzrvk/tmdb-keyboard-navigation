@@ -4,6 +4,10 @@ import { ApiError } from "./error"
 const BASE_URL = import.meta.env.VITE_TMDB_BASE_URL as string
 const TOKEN = import.meta.env.VITE_TMDB_TOKEN as string
 
+if (!BASE_URL || !TOKEN) {
+  throw new Error('Missing required environment variables: VITE_TMDB_BASE_URL and VITE_TMDB_TOKEN')
+}
+
 interface TmdbGetParams {
   path: string
   params?: RequestParams
@@ -41,7 +45,11 @@ export const tmdbGet = async ({ path, params, timeoutMs = 8000 }: TmdbGetParams)
       throw new ApiError(`HTTP ${response.status}`, response.status)
     }
 
-    return await response.json()
+    try {
+      return await response.json()
+    } catch (e: unknown) {
+      throw new ApiError('Failed to parse JSON response', undefined, e)
+    }
   } catch (e) {
 
     if (e instanceof DOMException && e.name === 'AbortError') {

@@ -1,11 +1,12 @@
 import { selectActiveFilter } from "@/entities/filter"
-import { moviesApiActions, selectMoviePage, selectMovieQuery, selectMovies } from "@/entities/movie"
+import { selectMoviePage, selectMovieQuery, selectMovies } from "@/entities/movie"
 import { selectSearchQuery } from "@/entities/search"
 import { useDispatch, useSelector } from "react-redux"
 import { getKey } from "../model"
 
 import { favouritesActions, selectFavourites } from "@/entities/favourites"
 import { useEffect, useMemo } from "react"
+import type { RootState } from "@/app"
 
 /**
  * Load movies
@@ -19,25 +20,14 @@ export const useMoviesQuery = () => {
   const key = useMemo(() => getKey(active, page, searchQuery), [active, page, searchQuery])
   const movies = useSelector(selectMovies(key ?? ''))
   const queryState = useSelector(selectMovieQuery(key ?? ''))
-  const favourites = useSelector(selectFavourites)
-
+  const favourites = useSelector(
+    (state: RootState) => active === 'favorites' ? selectFavourites(state) : []
+  )
   useEffect(() => {
     if (active === 'favorites') {
       dispatch(favouritesActions.loadFavoriteMovies())
-      return
     }
-
-    if (searchQuery.trim().length >= 2) {
-      dispatch(moviesApiActions.loadSearch(searchQuery, page))
-      return
-    }
-
-    if (active === 'popular') {
-      dispatch(moviesApiActions.loadPopular(page))
-    } else if (active === 'now_playing') {
-      dispatch(moviesApiActions.loadNowPlaying(page))
-    }
-  }, [dispatch, active, page, searchQuery])
+  }, [dispatch, active])
 
   // If there's a search query but no queryState yet, we're in a loading state
   const isSearchLoading = searchQuery.trim().length >= 2 && !queryState && movies.length === 0

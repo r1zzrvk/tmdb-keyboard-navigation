@@ -1,5 +1,5 @@
 import { imageBaseUrl, imageSizes } from '@/shared/constants'
-import { useFocusRing } from '@/shared/hooks'
+import { useFocusRing, useLazyBackground } from '@/shared/hooks'
 import { useNavigationItem } from '@/shared/lib'
 import { BackgroundImage, Box, Card, Text } from '@mantine/core'
 import type { FC } from 'react'
@@ -10,7 +10,7 @@ import { useSelector } from 'react-redux'
 import { selectFavourites } from '@/entities/favourites'
 import { HeartIcon } from '@phosphor-icons/react'
 
-export const MovieCard: FC<MovieCardProps> = memo(({ backdropPath, id, title, overview: _overview, order, posterPath }) => {
+export const MovieCard: FC<MovieCardProps> = memo(({ backdropPath, id, title, order, posterPath }) => {
   const navigate = useNavigate()
   const favourites = useSelector(selectFavourites)
   const isFavourite = useMemo(() => favourites.some(favMovie => favMovie.id === id), [favourites, id])
@@ -45,11 +45,14 @@ export const MovieCard: FC<MovieCardProps> = memo(({ backdropPath, id, title, ov
     [backdropPath, posterPath]
   )
 
+  const { elementRef, imageSrc } = useLazyBackground<HTMLDivElement>(img)
+
   return (
     <Card ref={ref} tabIndex={-1} onFocus={saveStateToListUrl}>
       <Card.Section>
         <BackgroundImage
-          src={img}
+          ref={elementRef}
+          src={imageSrc || ''}
           p="sm"
           style={{
             aspectRatio: '2 / 3',

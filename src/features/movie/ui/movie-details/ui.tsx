@@ -1,12 +1,12 @@
-import { useEffect, memo, type FC } from "react"
-import { getRuntime, type MovieDetailsProps } from "../../model"
-import { useMovieQuery } from "../../hooks"
-import { BackgroundImage, Badge, Box, Divider, Flex, Group, Image, Stack, Text, Title } from "@mantine/core"
-import { MovieBackButton } from "@/entities/movie"
-import { NoData, PageLoader, Error } from "@/shared/ui"
 import { MovieFavouriteButton } from "@/entities/favourites"
+import { MovieBackButton } from "@/entities/movie"
 import { imageBaseUrl, imageSizes } from "@/shared/constants"
+import { Error, NoData, PageLoader } from "@/shared/ui"
+import { BackgroundImage, Badge, Box, Divider, Flex, Group, Image, Stack, Text, Title } from "@mantine/core"
 import { StarIcon } from "@phosphor-icons/react"
+import { memo, useEffect, type FC } from "react"
+import { useMovieQuery } from "../../hooks"
+import { getRuntime, type MovieDetailsProps } from "../../model"
 
 export const MovieDetails: FC<MovieDetailsProps> = memo(({ id }) => {
   const { data: movie, error, loading } = useMovieQuery(id)
@@ -50,10 +50,18 @@ export const MovieDetails: FC<MovieDetailsProps> = memo(({ id }) => {
         <MovieBackButton />
         <Flex gap="lg" mt="md" align="flex-start" justify="flex-start">
           {/* Poster */}
-          <Image radius="xl" h={450} w={300} src={`${imageBaseUrl}${imageSizes.xl}${movie.posterPath}`} alt={movie.title} />
+          <Image
+            radius="xl"
+            h={450} w={300}
+            src={`${imageBaseUrl}${imageSizes.xl}${movie.posterPath}`}
+            alt={movie.title}
+            loading="lazy"
+          />
           <Stack gap={0}>
             {/* Title */}
-            <Title order={2} m={0} c="white">{movie.title} ({movie.releaseDate?.split('-')[0]})</Title>
+            <Title order={2} m={0} c="white">
+              {movie.title} {movie.releaseDate ? `(${movie.releaseDate.split('-')[0]})` : ''}
+            </Title>
             {movie.tagline && (
               <Text size="md" c="gray.5">{movie.tagline}</Text>
             )}
