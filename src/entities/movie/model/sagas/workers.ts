@@ -179,20 +179,6 @@ export function* loadDetailsWorker(action: LoadDetailsAction): Generator<Effect,
 }
 
 /**
- * Handles filter activation: immediately activates and loads the filter.
- */
-export function* filterActivatedWorker(action: ReturnType<typeof filterActions.filterActivated>): Generator<Effect, void, unknown> {
-  const filterId = action.payload
-
-  if (filterId === 'favorites') {
-    return
-  }
-
-  if (filterId === 'popular') yield put(moviesApiActions.loadPopular(1))
-  if (filterId === 'now_playing') yield put(moviesApiActions.loadNowPlaying(1))
-}
-
-/**
  * Handles filter focus: delays 2s then activates and loads the filter.
  */
 export function* filterFocusedWorker(action: ReturnType<typeof filterActions.filterFocused>): Generator<Effect, void, unknown> {
@@ -209,8 +195,6 @@ export function* filterFocusedWorker(action: ReturnType<typeof filterActions.fil
   }
 
   yield put(filterActions.filterActivated(filterId))
-  if (filterId === 'popular') yield put(moviesApiActions.loadPopular(1))
-  if (filterId === 'now_playing') yield put(moviesApiActions.loadNowPlaying(1))
 }
 
 /**
