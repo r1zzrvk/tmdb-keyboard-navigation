@@ -1,3 +1,3 @@
-export { getKey, getOrder } from './utils'
+export { getKey, getOrder, getRuntime } from './utils'
 export * from './constants'
 export * from './types'

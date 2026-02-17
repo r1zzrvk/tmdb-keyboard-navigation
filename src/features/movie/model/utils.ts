@@ -22,3 +22,9 @@ export const getOrder = (index: number, cols: number) => {
   const col = index % cols
   return row * cols + col
 }
+
+export const getRuntime = (runtime: number) => {
+  const hours = Math.floor(runtime / 60)
+  const minutes = runtime % 60
+  return `${hours}h ${minutes}m`
+}

@@ -1,7 +1,7 @@
 import { imageBaseUrl, imageSizes } from '@/shared/constants'
 import { useFocusRing } from '@/shared/hooks'
 import { useNavigationItem } from '@/shared/lib'
-import { BackgroundImage, Card, Text } from '@mantine/core'
+import { BackgroundImage, Box, Card, Text } from '@mantine/core'
 import type { FC } from 'react'
 import { memo, useCallback, useMemo } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
@@ -58,7 +58,7 @@ export const MovieCard: FC<MovieCardProps> = memo(({ backdropPath, id, title, ov
             flexDirection: 'column',
           }}
         >
-          <div
+          <Box
             style={{
               position: 'absolute',
               inset: 0,
@@ -68,24 +68,32 @@ export const MovieCard: FC<MovieCardProps> = memo(({ backdropPath, id, title, ov
             }}
           />
 
-          <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', flex: 1 }}>
+          <Box style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', flex: 1 }}>
             {isFavourite && (
-              <HeartIcon
-                size={32}
-                weight="duotone"
-                color="white"
-                style={{
-                  alignSelf: 'flex-end',
-                }}
-              />
+              <Box p="xs" style={{
+                alignSelf: 'flex-end',
+                backgroundColor: 'var(--mantine-color-indigo-8)',
+                borderRadius: 'var(--mantine-radius-lg)',
+                width: '52px',
+                height: '52px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+                <HeartIcon
+                  size={32}
+                  weight="fill"
+                  color="white"
+                />
+              </Box>
             )}
 
-            <div style={{ flex: 1 }} />
+            <Box style={{ flex: 1 }} />
 
             <Text fz="h3" fw={600} lineClamp={2}>
               {title}
             </Text>
-          </div>
+          </Box>
         </BackgroundImage>
       </Card.Section>
     </Card >

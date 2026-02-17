@@ -3,6 +3,7 @@ import { Button } from "@mantine/core"
 import { useCallback, useMemo, type FC } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { favouritesActions, selectFavourites, type MovieFavouriteButtonProps } from "../../model"
+import { HeartIcon } from "@phosphor-icons/react"
 
 export const MovieFavouriteButton: FC<MovieFavouriteButtonProps> = ({ movie }) => {
   const dispatch = useDispatch()
@@ -34,6 +35,9 @@ export const MovieFavouriteButton: FC<MovieFavouriteButtonProps> = ({ movie }) =
       ref={ref}
       tabIndex={-1}
       variant={isFavourite ? 'filled' : 'light'}
+      size="lg"
+      fullWidth={false}
+      leftSection={<HeartIcon size={24} weight={isFavourite ? 'fill' : 'regular'} />}
       onClick={handleClick}>
       {isFavourite ? 'Remove from favorites' : 'Add to favorites'}
     </Button>

@@ -1,10 +1,12 @@
 import { useEffect, memo, type FC } from "react"
-import type { MovieDetailsProps } from "../../model"
+import { getRuntime, type MovieDetailsProps } from "../../model"
 import { useMovieQuery } from "../../hooks"
-import { Stack, Text, Title } from "@mantine/core"
+import { BackgroundImage, Badge, Box, Divider, Flex, Group, Image, Stack, Text, Title } from "@mantine/core"
 import { MovieBackButton } from "@/entities/movie"
 import { NoData, PageLoader, Error } from "@/shared/ui"
 import { MovieFavouriteButton } from "@/entities/favourites"
+import { imageBaseUrl, imageSizes } from "@/shared/constants"
+import { StarIcon } from "@phosphor-icons/react"
 
 export const MovieDetails: FC<MovieDetailsProps> = memo(({ id }) => {
   const { data: movie, error, loading } = useMovieQuery(id)
@@ -26,16 +28,77 @@ export const MovieDetails: FC<MovieDetailsProps> = memo(({ id }) => {
   }
 
   return (
-    <div>
-      <Stack>
+    <BackgroundImage
+      src={`${imageBaseUrl}${imageSizes.xl}${movie.backdropPath}`}
+      style={{ position: 'relative' }}
+      w="100vw"
+      h="100vh"
+    >
+      <Box
+        style={{
+          position: 'absolute',
+          inset: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.6)',
+          width: '100vw',
+          height: '100vh',
+        }}
+      />
+      <Box style={{
+        position: 'relative', zIndex: 1, backdropFilter: 'blur(10px)', width: '100vw',
+        height: '100vh',
+      }} p="lg">
         <MovieBackButton />
-        <MovieFavouriteButton movie={movie} />
-      </Stack>
-      <Title order={2}>{movie.title}</Title>
-      <Text c="dimmed" mt="sm">
-        {movie.releaseDate ?? 'Unknown release date'}
-      </Text>
-      <Text mt="md">{movie.overview ?? 'No overview'}</Text>
-    </div>
+        <Flex gap="lg" mt="md" align="flex-start" justify="flex-start">
+          {/* Poster */}
+          <Image radius="xl" h={450} w={300} src={`${imageBaseUrl}${imageSizes.xl}${movie.posterPath}`} alt={movie.title} />
+          <Stack gap={0}>
+            {/* Title */}
+            <Title order={2} m={0} c="white">{movie.title} ({movie.releaseDate?.split('-')[0]})</Title>
+            {movie.tagline && (
+              <Text size="md" c="gray.5">{movie.tagline}</Text>
+            )}
+            <Divider my="md" />
+
+            {/* Genres */}
+            {movie.genres?.length !== 0 && (
+              <Group gap="xs" mb="md">
+                {movie.genres?.map((genre) => (
+                  <Badge key={genre.id} size="lg" color="gray.8">{genre.name}</Badge>
+                ))}
+              </Group>
+            )}
+
+            {/* Age Rating | Duration */}
+            <Group mb={movie.adult || movie.runtime ? 'sm' : 0}>
+              {movie.adult && (
+                <Badge size="xl" variant="filled" color="indigo.9">18+</Badge>
+              )}
+              {movie.runtime && (
+                <Text size="lg" c="white" >Duration: {getRuntime(movie.runtime)}</Text>
+              )}
+            </Group>
+
+            {/* Vote Average */}
+            {movie.voteAverage && movie.voteCount && (
+              <Group gap="xs" mb={'sm'}>
+                <StarIcon size={24} color="var(--mantine-color-yellow-6)" weight="fill" />
+                <Text size="lg" c="white">{movie.voteAverage.toFixed(1)}</Text>
+                <Text size="lg" c="white">({movie.voteCount} votes)</Text>
+              </Group>
+            )}
+
+            {/* Favourite Button */}
+            <Group mb="lg">
+              <MovieFavouriteButton movie={movie} />
+            </Group>
+
+            {/* Overview */}
+            {movie.overview && (
+              <Text size="lg" c="white">{movie.overview}</Text>
+            )}
+          </Stack>
+        </Flex>
+      </Box >
+    </BackgroundImage >
   )
 })

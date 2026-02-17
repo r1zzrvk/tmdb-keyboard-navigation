@@ -15,12 +15,6 @@ const router = createBrowserRouter([
         <HomePage />
       </Suspense>
     ),
-    loader: () => {
-      // TODO: Add loader
-      return {
-        title: 'Movies',
-      }
-    },
   },
   {
     path: RoutePaths.MovieDetails,
@@ -29,12 +23,6 @@ const router = createBrowserRouter([
         <MovieDetailsPage />
       </Suspense>
     ),
-    loader: ({ params }) => {
-      // TODO: Add loader
-      return {
-        title: `Movie ${params.id}`,
-      }
-    },
   },
   {
     path: '*',

@@ -4,7 +4,11 @@ export type MovieId = number
  * @see https://developer.themoviedb.org/reference/movie-details
  */
 
-// TODO: extend interface to include more movie properties
+export interface Genre {
+  id: number
+  name: string
+}
+
 export interface Movie {
   id: MovieId
   title: string
@@ -13,6 +17,13 @@ export interface Movie {
   backdropPath: string | null
   releaseDate: string | null
   voteAverage: number | null
+  adult: boolean
+  budget: number
+  genres: Genre[]
+  originalLanguage: string
+  runtime: number
+  tagline: string | null
+  voteCount: number
 }
 
 export type QueryKey = string
