@@ -2,6 +2,9 @@ import { makeKey, moviesApiActions, selectMovieById, selectMovieQuery } from "@/
 import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 
+/**
+ * Load movie details
+ */
 export const useMovieQuery = (id: number) => {
   const dispatch = useDispatch()
   const movie = useSelector(selectMovieById(id))

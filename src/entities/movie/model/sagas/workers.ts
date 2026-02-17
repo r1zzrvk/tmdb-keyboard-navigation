@@ -1,7 +1,7 @@
 import type { ListRequestKind, TmdbMovie, TmdbPagedResponse } from "@/shared/types"
 import { call, put, select, delay, type Effect } from "redux-saga/effects"
 import { makeKey, mapMovie } from "../utils"
-import { selectMovieQuery } from "../store"
+import { paginationActions, selectMovieQuery } from "../store"
 import { movieQueriesActions } from "../store/queriesSlice"
 import { fetchMovieDetails, fetchNowPlaying, fetchPopular, searchMovies } from "@/shared/api"
 import type { Movie, QueryState } from "../types"
@@ -194,6 +194,7 @@ export function* filterFocusedWorker(action: ReturnType<typeof filterActions.fil
     return
   }
 
+  yield put(paginationActions.resetPage())
   yield put(filterActions.filterActivated(filterId))
 }
 
@@ -207,5 +208,6 @@ export function* searchQueryChangedWorker(action: ReturnType<typeof searchAction
     return
   }
 
+  yield put(paginationActions.resetPage())
   yield put(moviesApiActions.loadSearch(query, 1))
 }

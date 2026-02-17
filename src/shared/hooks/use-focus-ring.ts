@@ -1,6 +1,9 @@
 import { useEffect, type RefObject } from "react"
 import { focusRing } from "../styles"
 
+/**
+ * Add focus ring to the element
+ */
 export const useFocusRing = (ref: RefObject<HTMLElement | null>) => {
   useEffect(() => {
     const element = ref.current

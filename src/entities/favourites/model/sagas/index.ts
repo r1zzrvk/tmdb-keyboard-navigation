@@ -1,0 +1,1 @@
+export { watchFavourites } from './watch'

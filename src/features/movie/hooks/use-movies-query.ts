@@ -1,12 +1,15 @@
 import { selectActiveFilter } from "@/entities/filter"
+import { moviesApiActions, selectMoviePage, selectMovieQuery, selectMovies } from "@/entities/movie"
 import { selectSearchQuery } from "@/entities/search"
 import { useDispatch, useSelector } from "react-redux"
 import { getKey } from "../model"
-import { moviesApiActions, paginationActions, selectMoviePage, selectMovieQuery, selectMovies } from "@/entities/movie"
 
-import { useEffect, useMemo } from "react"
 import { favouritesActions, selectFavourites } from "@/entities/favourites"
+import { useEffect, useMemo } from "react"
 
+/**
+ * Load movies
+ */
 export const useMoviesQuery = () => {
   const dispatch = useDispatch()
   const active = useSelector(selectActiveFilter)
@@ -19,12 +22,13 @@ export const useMoviesQuery = () => {
   const favourites = useSelector(selectFavourites)
 
   useEffect(() => {
-    dispatch(paginationActions.resetPage())
-  }, [dispatch, active, searchQuery])
-
-  useEffect(() => {
     if (active === 'favorites') {
       dispatch(favouritesActions.loadFavoriteMovies())
+      return
+    }
+
+    if (searchQuery.trim().length >= 2) {
+      dispatch(moviesApiActions.loadSearch(searchQuery, page))
       return
     }
 
@@ -33,7 +37,7 @@ export const useMoviesQuery = () => {
     } else if (active === 'now_playing') {
       dispatch(moviesApiActions.loadNowPlaying(page))
     }
-  }, [dispatch, active, page])
+  }, [dispatch, active, page, searchQuery])
 
   // If there's a search query but no queryState yet, we're in a loading state
   const isSearchLoading = searchQuery.trim().length >= 2 && !queryState && movies.length === 0

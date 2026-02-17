@@ -1,14 +1,25 @@
 import { imageBaseUrl, imageSizes } from '@/shared/constants'
+import { useFocusRing } from '@/shared/hooks'
+import { useNavigationItem } from '@/shared/lib'
 import { Card, Image, Text } from '@mantine/core'
 import type { FC } from 'react'
 import { memo, useCallback, useMemo } from 'react'
-import { useNavigate } from 'react-router-dom'
-import type { MovieCardProps } from '../../model'
-import { useNavigationItem } from '@/shared/lib'
-import { useFocusRing } from '@/shared/hooks'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { selectMoviePage, type MovieCardProps } from '../../model'
+import { useSelector } from 'react-redux'
 
 export const MovieCard: FC<MovieCardProps> = memo(({ posterPath, id, title, overview, order }) => {
   const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const page = useSelector(selectMoviePage)
+
+  const saveStateToListUrl = useCallback(() => {
+    const params = new URLSearchParams(searchParams)
+    params.set("activeItem", `movie_${id}`)
+    params.set("page", page.toString())
+
+    setSearchParams(params, { replace: true })
+  }, [searchParams, setSearchParams, id, page])
 
   const handleClick = useCallback(() => {
     navigate(`/movie/${id}`)
@@ -31,7 +42,7 @@ export const MovieCard: FC<MovieCardProps> = memo(({ posterPath, id, title, over
   const emptyDivStyle = useMemo(() => ({ height: 180 }), [])
 
   return (
-    <Card ref={ref} tabIndex={-1} withBorder>
+    <Card ref={ref} tabIndex={-1} withBorder onFocus={saveStateToListUrl}>
       {img ? <Image src={img} height={180} alt={title} /> : <div style={emptyDivStyle} />}
       <Text fw={600} mt="sm" lineClamp={2}>
         {title}

@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react"
 
+/**
+ * Get the current pathname
+ */
 export function usePathname() {
   const [pathname, setPathname] = useState(() => window.location.pathname)
 

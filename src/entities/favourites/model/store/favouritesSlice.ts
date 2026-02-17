@@ -1,6 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import { loadFavoriteMovies, saveFavoriteMovies } from '../../api'
 import type { Movie } from '@/entities/movie'
 
 type State = { movies: Movie[] }
@@ -12,18 +11,16 @@ export const favouritesSlice = createSlice({
   initialState,
   reducers: {
     toggleFavorite(state, action: PayloadAction<Movie>) {
-      const isFavourite = state.movies.find(movie => movie.id === action.payload.id)
-
-      if (isFavourite) {
-        state.movies = state.movies.filter(movie => movie.id !== action.payload.id)
-      }
-
-      state.movies = [...state.movies, action.payload]
-
-      saveFavoriteMovies(state.movies)
+      const exists = state.movies.some(movie => movie.id === action.payload.id)
+      state.movies = exists
+        ? state.movies.filter(movie => movie.id !== action.payload.id)
+        : [...state.movies, action.payload]
     },
-    loadFavoriteMovies(state) {
-      state.movies = loadFavoriteMovies()
+    setMovies(state, action: PayloadAction<Movie[]>) {
+      state.movies = action.payload
+    },
+    loadFavoriteMovies() {
+      // handled in saga
     }
   }
 })

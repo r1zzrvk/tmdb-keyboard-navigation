@@ -2,13 +2,11 @@ import { useNavigationItem } from "@/shared/lib"
 import { Button } from "@mantine/core"
 import type { FC } from "react"
 import { memo, useCallback } from "react"
-import { useNavigate } from "react-router-dom"
 
 export const MovieBackButton: FC = memo(() => {
-  const navigate = useNavigate()
-
-  // TODO: Add page and focus saving
-  const handleBack = useCallback(() => navigate('/'), [navigate])
+  const handleBack = useCallback(() => {
+    window.history.back()
+  }, [])
 
   const { ref } = useNavigationItem<HTMLButtonElement>({
     id: 'details_back',

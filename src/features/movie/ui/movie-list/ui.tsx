@@ -1,15 +1,16 @@
 import { MovieCard, paginationActions } from "@/entities/movie"
+import { Error, NoData, PageLoader, Paginator } from "@/shared/ui"
 import { SimpleGrid } from "@mantine/core"
-import { useAutofocus, useMoviesQuery } from "../../hooks"
-import { Paginator, PageLoader, NoData, Error } from "@/shared/ui"
+import { useCallback, useEffect, useMemo } from "react"
 import { useDispatch } from "react-redux"
+import { useAutofocus, useMoviesQuery, useRestorePage } from "../../hooks"
 import { COLS, getOrder } from "../../model"
-import { useEffect, useCallback, useMemo } from "react"
 
 export const MovieList = () => {
   const dispatch = useDispatch()
   const { data: movies, error, loading, page, totalPages } = useMoviesQuery()
 
+  useRestorePage()
   useAutofocus(loading, movies, page)
 
   useEffect(() => {

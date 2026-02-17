@@ -4,6 +4,7 @@ import { FilterButton } from "../filter-button"
 import { useDispatch, useSelector } from "react-redux"
 import { searchActions, SearchInput, selectSearchQuery } from "@/entities/search"
 import { useCallback } from "react"
+import { paginationActions } from "@/entities/movie"
 
 export const Filters = () => {
   const dispatch = useDispatch()
@@ -12,6 +13,7 @@ export const Filters = () => {
 
   const handleFilterClick = useCallback((filter: FilterId) => {
     dispatch(filterActions.filterActivated(filter))
+    dispatch(paginationActions.resetPage())
   }, [dispatch])
 
   const handleSearchChange = useCallback((value: string) => {

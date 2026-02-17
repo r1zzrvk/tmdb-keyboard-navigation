@@ -1,29 +1,31 @@
 import { useNavigationItem } from "@/shared/lib"
 import { Button } from "@mantine/core"
-import { useMemo, useCallback, type FC } from "react"
+import { useCallback, useMemo, type FC } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { favouritesActions, selectFavourites, type MovieFavouriteButtonProps } from "../../model"
-import { useNavigate } from "react-router-dom"
 
 export const MovieFavouriteButton: FC<MovieFavouriteButtonProps> = ({ movie }) => {
-  const navigate = useNavigate()
   const dispatch = useDispatch()
   const favourites = useSelector(selectFavourites)
-  const isFavourite = useMemo(() => favourites.find(favMovie => favMovie.id === movie.id), [favourites, movie])
+  const isFavourite = useMemo(() => favourites.some(favMovie => favMovie.id === movie.id), [favourites, movie.id])
 
   const handleClick = useCallback(() => {
     dispatch(favouritesActions.toggleFavorite(movie))
   }, [dispatch, movie])
 
-  const handleBack = useCallback(() => navigate('/'), [navigate])
+  const handleBack = useCallback(() => {
+    window.history.back()
+  }, [])
+
+  const handleEnter = useCallback(() => {
+    handleClick()
+  }, [handleClick])
 
   const { ref } = useNavigationItem<HTMLButtonElement>({
     id: 'details_fav',
     zoneId: 'favourites',
     order: 0,
-    onEnter: () => {
-      handleClick()
-    },
+    onEnter: handleEnter,
     onEscape: handleBack,
   })
 

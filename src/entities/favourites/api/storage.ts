@@ -1,5 +1,5 @@
 import type { Movie } from "@/entities/movie"
-import { FAVORITES_STORAGE_KEY } from "../model"
+import { FAVORITES_STORAGE_KEY } from "../model/constants"
 
 export function loadFavoriteMovies(): Movie[] {
   try {
