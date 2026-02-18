@@ -1,3 +1,4 @@
+import { useFocusRing } from "@/shared/hooks"
 import { useNavigationItem } from "@/shared/lib"
 import { Button } from "@mantine/core"
 import { ArrowLeftIcon } from "@phosphor-icons/react"
@@ -16,6 +17,8 @@ export const MovieBackButton: FC = memo(() => {
     onEnter: handleBack,
     onEscape: handleBack,
   })
+
+  useFocusRing(ref)
 
   return (
     <Button

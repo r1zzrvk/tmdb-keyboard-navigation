@@ -3,6 +3,7 @@ import type { FC } from "react"
 import { memo, useCallback } from "react"
 import type { PaginatorButtonProps } from "../../model"
 import { useNavigationItem } from "@/shared/lib"
+import { useFocusRing } from "@/shared/hooks"
 
 export const PaginatorButton: FC<PaginatorButtonProps> = memo(({
   id,
@@ -23,6 +24,8 @@ export const PaginatorButton: FC<PaginatorButtonProps> = memo(({
     order,
     onEnter: handleEnter,
   })
+
+  useFocusRing(ref)
 
   return (
     <Button ref={ref} tabIndex={-1} variant="light" disabled={disabled} onClick={onClick} size="lg">

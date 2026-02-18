@@ -4,6 +4,7 @@ import { useCallback, useMemo, type FC } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { favouritesActions, selectFavourites, type MovieFavouriteButtonProps } from "../../model"
 import { HeartIcon } from "@phosphor-icons/react"
+import { useFocusRing } from "@/shared/hooks"
 
 export const MovieFavouriteButton: FC<MovieFavouriteButtonProps> = ({ movie }) => {
   const dispatch = useDispatch()
@@ -29,6 +30,8 @@ export const MovieFavouriteButton: FC<MovieFavouriteButtonProps> = ({ movie }) =
     onEnter: handleEnter,
     onEscape: handleBack,
   })
+
+  useFocusRing(ref)
 
   return (
     <Button

@@ -6,7 +6,10 @@ import { getKey } from "../model"
 
 import { favouritesActions, selectFavourites } from "@/entities/favourites"
 import { useEffect, useMemo } from "react"
-import type { RootState } from "@/app"
+import type { Movie } from "@/entities/movie"
+
+// Empty array constant to avoid creating new array on each call
+const EMPTY_ARRAY: Movie[] = []
 
 /**
  * Load movies
@@ -20,8 +23,10 @@ export const useMoviesQuery = () => {
   const key = useMemo(() => getKey(active, page, searchQuery), [active, page, searchQuery])
   const movies = useSelector(selectMovies(key ?? ''))
   const queryState = useSelector(selectMovieQuery(key ?? ''))
-  const favourites = useSelector(
-    (state: RootState) => active === 'favorites' ? selectFavourites(state) : []
+  const favouritesFromStore = useSelector(selectFavourites)
+  const favourites = useMemo(
+    () => active === 'favorites' ? favouritesFromStore : EMPTY_ARRAY,
+    [active, favouritesFromStore]
   )
   useEffect(() => {
     if (active === 'favorites') {
@@ -32,8 +37,11 @@ export const useMoviesQuery = () => {
   // If there's a search query but no queryState yet, we're in a loading state
   const isSearchLoading = searchQuery.trim().length >= 2 && !queryState && movies.length === 0
 
+  // Don't return favourites if there's an active search query
+  const shouldShowFavourites = active === 'favorites' && searchQuery.trim().length < 2
+
   return {
-    data: active === 'favorites' ? favourites : movies,
+    data: shouldShowFavourites ? favourites : movies,
     error: queryState?.error,
     loading: queryState?.status === 'loading' || isSearchLoading,
     totalPages: queryState?.totalPages,

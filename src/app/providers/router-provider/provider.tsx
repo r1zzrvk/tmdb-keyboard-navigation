@@ -3,17 +3,15 @@ import type { FC } from 'react'
 import { Suspense, lazy } from 'react'
 import { RoutePaths } from '@/shared/constants'
 import { PageLoader } from '@/shared/ui'
+import { HomePage } from '@/pages/home'
 
-const HomePage = lazy(() => import('@/pages/home').then(module => ({ default: module.HomePage })))
 const MovieDetailsPage = lazy(() => import('@/pages/movie-details').then(module => ({ default: module.MovieDetailsPage })))
 
 const router = createBrowserRouter([
   {
     path: RoutePaths.Home,
     element: (
-      <Suspense fallback={<PageLoader />}>
-        <HomePage />
-      </Suspense>
+      <HomePage />
     ),
   },
   {

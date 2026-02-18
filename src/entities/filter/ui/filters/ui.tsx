@@ -16,7 +16,10 @@ export const Filters = () => {
 
   const handleSearchChange = useCallback((value: string) => {
     dispatch(searchActions.searchQueryChanged(value))
-  }, [dispatch])
+    if (value.trim().length >= 2 && active !== 'popular') {
+      dispatch(filterActions.filterSetActive('popular'))
+    }
+  }, [dispatch, active])
 
   const handleFilterFocus = useCallback((filter: FilterId) => {
     dispatch(filterActions.filterFocused(filter))

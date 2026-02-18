@@ -3,6 +3,7 @@ import { memo, useCallback } from "react"
 import type { FilterButtonProps } from "../../model"
 import { Button } from "@mantine/core"
 import { useNavigationItem } from "@/shared/lib"
+import { useFocusRing } from "@/shared/hooks"
 
 export const FilterButton: FC<FilterButtonProps> = memo(({ id, active, order, label, onClick, onFocus, onBlur }) => {
   const handleClick = useCallback(() => {
@@ -19,6 +20,8 @@ export const FilterButton: FC<FilterButtonProps> = memo(({ id, active, order, la
     order,
     onEnter: handleEnter,
   })
+
+  useFocusRing(ref)
 
   return (
     <Button

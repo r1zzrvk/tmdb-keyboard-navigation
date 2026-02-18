@@ -16,6 +16,10 @@ export const filterSlice = createSlice({
     filterActivated(state, action: PayloadAction<FilterId>) {
       state.active = action.payload
     },
+    filterSetActive(state, action: PayloadAction<FilterId>) {
+      // Silent version that only changes state without triggering saga side effects
+      state.active = action.payload
+    },
     filterFocused(state, action: PayloadAction<FilterId>) {
       state.focused = action.payload
     },

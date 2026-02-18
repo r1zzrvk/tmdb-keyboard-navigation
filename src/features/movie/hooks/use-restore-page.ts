@@ -20,6 +20,8 @@ export const useRestorePage = () => {
       if (!isNaN(pageNumber) && pageNumber > 0) {
         dispatch(paginationActions.setPage(pageNumber))
       }
+    } else {
+      dispatch(paginationActions.setPage(1))
     }
 
     hasRestoredState.current = true

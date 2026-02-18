@@ -1,5 +1,5 @@
 import { imageBaseUrl, imageSizes } from '@/shared/constants'
-import { useFocusRing, useLazyBackground } from '@/shared/hooks'
+import { useFocusRing } from '@/shared/hooks'
 import { useNavigationItem } from '@/shared/lib'
 import { BackgroundImage, Box, Card, Text } from '@mantine/core'
 import type { FC } from 'react'
@@ -45,14 +45,11 @@ export const MovieCard: FC<MovieCardProps> = memo(({ backdropPath, id, title, or
     [backdropPath, posterPath]
   )
 
-  const { elementRef, imageSrc } = useLazyBackground<HTMLDivElement>(img)
-
   return (
     <Card ref={ref} tabIndex={-1} onFocus={saveStateToListUrl}>
       <Card.Section>
         <BackgroundImage
-          ref={elementRef}
-          src={imageSrc || ''}
+          src={img || ''}
           p="sm"
           style={{
             aspectRatio: '2 / 3',

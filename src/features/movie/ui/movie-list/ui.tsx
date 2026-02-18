@@ -1,6 +1,6 @@
 import { MovieCard, paginationActions } from "@/entities/movie"
-import { Error, NoData, PageLoader, Paginator } from "@/shared/ui"
-import { SimpleGrid } from "@mantine/core"
+import { Error, NoData, Paginator } from "@/shared/ui"
+import { SimpleGrid, Skeleton } from "@mantine/core"
 import { useCallback, useEffect, useMemo } from "react"
 import { useDispatch } from "react-redux"
 import { useAutofocus, useMoviesQuery, useRestorePage } from "../../hooks"
@@ -25,22 +25,23 @@ export const MovieList = () => {
     dispatch(paginationActions.nextPage())
   }, [dispatch])
 
-  const movieCards = useMemo(() =>
-    movies.map((movie, index) => (
-      <MovieCard key={movie.id} order={getOrder(index, COLS)} {...movie} />
-    )),
-    [movies]
-  )
+  const movieCards = useMemo(() => {
 
-  if (loading && movies.length === 0) {
-    return <PageLoader />
-  }
+    if (loading && movies.length === 0) {
+      return Array.from({ length: 8 }).map((_, index) => (
+        <Skeleton key={`skeleton-${index}`} height={400} radius="lg" />
+      ))
+    }
+    return movies.map((movie, index) => (
+      <MovieCard key={movie.id} order={getOrder(index, COLS)} {...movie} />
+    ))
+  }, [movies, loading])
 
   if (error) {
     return <Error message={error} />
   }
 
-  if (movies.length === 0) {
+  if (!loading && movies.length === 0) {
     return <NoData />
   }
 

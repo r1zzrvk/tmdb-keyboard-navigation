@@ -218,6 +218,12 @@ export function* handleSearchQueryChanged(action: ReturnType<typeof searchAction
 export function* handleFilterActivated(action: ReturnType<typeof filterActions.filterActivated>): Generator<Effect, void, unknown> {
   const filterId = action.payload
 
+  // Clear search query if it exists (for all filters including favorites)
+  const searchQuery = (yield select(selectSearchQuery)) as string
+  if (searchQuery.trim().length > 0) {
+    yield put(searchActions.searchQueryChanged(''))
+  }
+
   if (filterId === 'favorites') {
     // Favorites handled separately
     return

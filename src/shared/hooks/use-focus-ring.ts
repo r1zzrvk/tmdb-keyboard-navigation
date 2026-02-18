@@ -10,6 +10,10 @@ export const useFocusRing = (ref: RefObject<HTMLElement | null>) => {
     if (!element) return
 
     const handleFocus = () => {
+      if ((element as HTMLButtonElement).disabled) {
+        return
+      }
+
       element.classList.add(focusRing.focusRing)
     }
 
